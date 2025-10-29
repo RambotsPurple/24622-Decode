@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 @TeleOp(name = "tel")
 public class test extends OpMode {
     Robot robot;
-    GamepadEx driver = new GamepadEx(gamepad1);
-    GamepadEx operator = new GamepadEx(gamepad2);
+//    GamepadEx driver = new GamepadEx(gamepad1);
+//    GamepadEx operator = new GamepadEx(gamepad2);
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap, Alliance.BLUE, driver, operator);
+        robot = new Robot(hardwareMap, Alliance.BLUE, gamepad1, gamepad2);
     }
 
     @Override
@@ -28,6 +28,7 @@ public class test extends OpMode {
     @Override
     public void loop() {
         robot.periodic();
+        robot.tele();
     }
 
 } // linearOpMod

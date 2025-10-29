@@ -69,6 +69,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
@@ -83,7 +84,7 @@ public class Robot {
 
 
     protected GamepadEx driver, operator;
-    private final List<LynxModule> hubs;
+//    private final List<LynxModule> hubs;
     private final Timer loop = new Timer();
     private int loops = 0;
     private double loopTime = 0;
@@ -91,56 +92,60 @@ public class Robot {
     public Shooter shooter;
     public Intake intake;
     public Transfer transfer;
+    public Drive drive;
+
+
 
     public static Pose endPose = new Pose();
 
-    public Robot(HardwareMap h, Alliance alliance, GamepadEx driver, GamepadEx operator) {
-        Shooter shooter = new Shooter(h);
-        Intake intake = new Intake(h);
-        Transfer transfer = new Transfer(h);
-        follower = Constants.createFollower(h);
-        follower.setStartingPose(new Pose(0,0,0));
-
+    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Gamepad  operator) {
+         shooter = new Shooter(h);
+         intake = new Intake(h);
+         transfer = new Transfer(h);
+         drive  = new Drive(h);
+//        follower = Constants.createFollower(h);
+//        follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
-        this.driver = driver;
-        this.operator = operator;
+        this.driver = new GamepadEx(driver);
+        this.operator = new GamepadEx(operator);
         //bulk caching to increase loop speeds
-        hubs = h.getAll(LynxModule.class);
-        for (LynxModule module : hubs) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        }
-
-        loop.resetTimer();
+//        hubs = h.getAll(LynxModule.class);
+//        for (LynxModule module : hubs) {
+//            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+//        }
+//
+//        loop.resetTimer();
         cs.registerSubsystem(
-                shooter, transfer,intake
+                shooter, transfer,intake,drive
         );
 
     }//end of teleop constructor
 
     public void periodic() {
-        follower.update();
-        follower.setTeleOpDrive(
-                -driver.getLeftX() ,
-                -driver.getLeftY() ,
-                -driver.getRightX(),
-                false
-        );
+        drive.drive(-driver.getLeftX(),-driver.getLeftY(),driver.getRightX());
+//        follower.update();
+//        follower.setTeleOpDrive(
+//                -driver.getLeftX() ,
+//                -driver.getLeftY() ,
+//                -driver.getRightX(),
+//                false
+//        );
         //bulk cache
-        loops++;
-
-        if (loop.getElapsedTime() % 5 == 0) {
-            for (LynxModule hub : hubs) {
-                hub.clearBulkCache();
-            }
-
-            loopTime = (double) loop.getElapsedTime() / loops;
-        }
-        //bulk cache
+//        loops++;
+//
+//        if (loop.getElapsedTime() % 5 == 0) {
+//            for (LynxModule hub : hubs) {
+//                hub.clearBulkCache();
+//            }
+//
+//            loopTime = (double) loop.getElapsedTime() / loops;
+//        }
+//        //bulk cache
         cs.run();
     }//end of periodic
     public void tStart(){
-        follower.update();
-        follower.startTeleopDrive(true);
+//        follower.update();
+//        follower.startTeleopDrive(true);
     }
     public void tele(){
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
