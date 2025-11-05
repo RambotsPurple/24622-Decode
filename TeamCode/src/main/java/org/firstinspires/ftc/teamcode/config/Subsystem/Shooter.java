@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Shooter extends SubsystemBase {
 
-    private DcMotorEx shooter1, shooter2;
+    private DcMotorEx shooter1;
     // make ramp motor or servo
 
 
@@ -19,23 +19,22 @@ public class Shooter extends SubsystemBase {
     private double integralSum = 0;
     private double lastError = 0;
 
+    private final int ticksPerRev = 1440;
+
 
     private int lastPos = 0;
 
     public Shooter(HardwareMap hw) {
         shooter1 = hw.get(DcMotorEx.class, "lShoot");
+        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2 = hw.get(DcMotorEx.class, "rShoot");        //run without so we can utilize 100% of it's power
         // Orientation for shooter
         shooter1.setDirection(DcMotor.Direction.REVERSE);
-        shooter2.setDirection(DcMotor.Direction.REVERSE);
-
 
     } // init
 
     public void setPower(double p) {
         shooter1.setPower(p);
-        shooter2.setPower(p);
     } // shoot
 
 
@@ -63,6 +62,16 @@ public class Shooter extends SubsystemBase {
 
     public int getCurrentPosition() {
         return shooter1.getCurrentPosition();
+    }
+
+    public void resetMotor() {
+        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter1.setTargetPosition(ticksPerRev);
+        shooter1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void setMotorVel(double p) {
+        shooter1.setPower(p);
     }
 
     // get RPM by comparing current encoder position to last encoder position
