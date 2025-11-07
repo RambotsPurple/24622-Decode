@@ -24,7 +24,7 @@ public class FollowPathCommand extends CommandBase {
         follower.update();  // keep path following active
     }
 
-    // idk why exsurgo doesn't have an ifFinished but according to FTClib docs if u dont have this the command will never end :(
+    // if u dont have an isfinished the command will never end - ftclib official docs :(
     @Override
     public boolean isFinished() {
         return !follower.isBusy();
