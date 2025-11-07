@@ -45,7 +45,7 @@ public class Paths { // supposed to be static?
                         new BezierLine(new Pose(120.7, 126),
                                 new Pose(shootingPositionX, shootingPositionY))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(38), Math.toRadians(45))
                 .build();
 
         Path4 = follower
@@ -54,7 +54,7 @@ public class Paths { // supposed to be static?
                         new BezierLine(new Pose(23.3, 126.000),
                                 new Pose(144 - shootingPositionX, shootingPositionY))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(142), Math.toRadians(135))
                 .build();
     }
 }
