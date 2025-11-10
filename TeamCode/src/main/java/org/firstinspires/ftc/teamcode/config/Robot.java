@@ -61,6 +61,7 @@ A: Critical subsystems like vision (for AprilTags) and telemetry sensors need th
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -69,6 +70,7 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.config.Commands.CatapultShooterCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.config.Util.*;
 import org.firstinspires.ftc.teamcode.config.Subsystem.*;
@@ -148,6 +150,11 @@ public class Robot {
                 .whenActive(new IntakeCommand(intake, 1))
                 .whenInactive(new IntakeCommand(intake, 0));
 
+        operator.getGamepadButton(GamepadKeys.Button.A).whenReleased(new CatapultShooterCommand(shooter, 1));
+
+//        if (operator.wasJustReleased(GamepadKeys.Button.A)) {
+//            cs.schedule(false, new CatapultShooterCommand(shooter, 1));
+//        }
     }
     public void stop() {
     }//end of stop
