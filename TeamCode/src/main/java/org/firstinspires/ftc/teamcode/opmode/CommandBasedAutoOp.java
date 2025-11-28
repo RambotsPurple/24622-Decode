@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmode;
+import org.firstinspires.ftc.teamcode.config.Paths.Paths;
+
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -13,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
+import org.firstinspires.ftc.teamcode.config.Commands.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "pedro test", group = "Examples")
@@ -21,11 +26,17 @@ public class CommandBasedAutoOp extends CommandOpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void initialize() {
+        Paths p = new Paths(follower);
         // hardware & subsystems
         // schedule your autonomous sequence
         schedule(
                 new SequentialCommandGroup(
                         // commands here
+                        new FollowPathCommand(follower, p.startToShoot),
+                        new WaitCommand(3000),
+                        new FollowPathCommand(follower, p.intakeRow1A),
+                        new FollowPathCommand(follower, p.intakeRow1B),
+                        new FollowPathCommand(follower, p.intakeRow1C)
                 )
         );
     }
