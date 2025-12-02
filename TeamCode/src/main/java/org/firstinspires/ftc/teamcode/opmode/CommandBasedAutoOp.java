@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode;
+import org.firstinspires.ftc.teamcode.config.Commands.CommandGroups.AutoCommandGroup;
 import org.firstinspires.ftc.teamcode.config.Paths.Paths;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
@@ -30,14 +31,7 @@ public class CommandBasedAutoOp extends CommandOpMode {
         // hardware & subsystems
         // schedule your autonomous sequence
         schedule(
-                new SequentialCommandGroup(
-                        // commands here
-                        new FollowPathCommand(follower, p.startToShoot),
-                        new WaitCommand(3000),
-                        new FollowPathCommand(follower, p.intakeRow1A),
-                        new FollowPathCommand(follower, p.intakeRow1B),
-                        new FollowPathCommand(follower, p.intakeRow1C)
-                )
+                new AutoCommandGroup()
         );
     }
 
