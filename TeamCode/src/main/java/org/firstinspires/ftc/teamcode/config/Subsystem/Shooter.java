@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.config.Subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Shooter extends SubsystemBase {
 
-    private DcMotorEx shooter1;
+    private DcMotorEx shooter1, shooter2;
     // make ramp motor or servo
 
 
@@ -26,17 +27,24 @@ public class Shooter extends SubsystemBase {
 
     public Shooter(HardwareMap hw) {
         shooter1 = hw.get(DcMotorEx.class, "lShoot");
+        shooter2 = hw.get(DcMotorEx.class, "rShoot");
+
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 //        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Orientation for shooter
         shooter1.setDirection(DcMotor.Direction.REVERSE);
+        shooter2.setDirection(DcMotor.Direction.FORWARD);
+
 
     } // init
 
+    // this is identical to setMotorVel() but use setMotorVel instead of this one ok
     public void setPower(double p) {
         shooter1.setPower(p);
+        shooter2.setPower(p);
     } // shoot
-
 
 
     // set RPM of motor
@@ -72,6 +80,7 @@ public class Shooter extends SubsystemBase {
 
     public void setMotorVel(double p) {
         shooter1.setPower(p);
+        shooter2.setPower(p);
     }
 
     // get RPM by comparing current encoder position to last encoder position
