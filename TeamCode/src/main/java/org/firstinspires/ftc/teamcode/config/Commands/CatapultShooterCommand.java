@@ -22,7 +22,11 @@ public class CatapultShooterCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return (shooter.getCurrentPosition() >= shooter.getTargetPosition() + 10);
+        if (shooter.getCurrentPosition() >= shooter.getTargetPosition() + 10) {
+            shooter.setMotorVel(0);
+            return true;
+        }
+        return false;
     }
 
 }

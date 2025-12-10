@@ -17,13 +17,7 @@ import org.firstinspires.ftc.teamcode.config.Subsystem.Intake;
 public class AutoCommandGroup extends SequentialCommandGroup {
     Paths p = new Paths(follower);
 
-    /**
-     * Creates a new AutoCommandGroup command group.
-     *
-     * @param drive The drive subsystem this command will run on
-     * @param intake The gripper subsystem this command will run on
-     */
-    public AutoCommandGroup(Drive drive, Intake intake)
+    public AutoCommandGroup()
     {
         addCommands(
                 new FollowPathCommand(follower, p.startToShoot),
@@ -32,7 +26,6 @@ public class AutoCommandGroup extends SequentialCommandGroup {
                 new FollowPathCommand(follower, p.intakeRow1B),
                 new FollowPathCommand(follower, p.intakeRow1C)
         );
-        addRequirements(drive, intake);
     }
 
 }

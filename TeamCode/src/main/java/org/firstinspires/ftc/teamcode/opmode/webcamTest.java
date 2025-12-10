@@ -7,28 +7,30 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.config.Robot;
+import org.firstinspires.ftc.teamcode.config.Subsystem.Webcam;
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@TeleOp(name = "real teleop not fake :D - RUN THIS ONE")
-public class test extends OpMode {
-    Robot robot;
-//    GamepadEx driver = new GamepadEx(gamepad1);
-//    GamepadEx operator = new GamepadEx(gamepad2);
+@TeleOp(name = "webcam")
+public class webcamTest extends OpMode {
+    Webcam webcam;
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap, Alliance.BLUE, gamepad1, gamepad2);
+        webcam = new Webcam(hardwareMap, telemetry);
     }
 
     @Override
     public void start() {
-        robot.tStart();
     }
 
     @Override
     public void loop() {
-        robot.periodic();
-        robot.tele();
+
+        //---------------- WEBCAM STUFF
+        webcam.update();
+        AprilTagDetection a = webcam.getTagById(20);
+        webcam.displayAprilTagDetection(a);
     }
 
 } // linearOpMod
