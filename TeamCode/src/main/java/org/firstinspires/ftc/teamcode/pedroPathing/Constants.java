@@ -48,7 +48,7 @@ public class   Constants {
             .rightEncoderDirection(Encoder.FORWARD)
             .strafeEncoderDirection(Encoder.REVERSE)
             .IMU_HardwareMapName("imu")
-            .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+            .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("rightFront")
