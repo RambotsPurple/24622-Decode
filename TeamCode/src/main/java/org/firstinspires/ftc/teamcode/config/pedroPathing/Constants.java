@@ -20,7 +20,7 @@ public class   Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(8);
     //@TODO get the vel from forward Velocity tuner
-    //.xVelocity(velocity)
+//            .xVelocity(42.807841477933664);
     //@Todo get teh vel from lateral vel tuner
     //.yVelocity(velocity)
     //@Todo get from FZPA
