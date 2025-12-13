@@ -22,6 +22,8 @@ public class Shooter extends SubsystemBase {
 
     private final int ticksPerRev = 1440;
 
+    private  int downTick = 535;
+//    private int upTick -11
 
     private int lastPos = 0;
 
@@ -32,10 +34,15 @@ public class Shooter extends SubsystemBase {
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-//        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Orientation for shooter
         shooter1.setDirection(DcMotor.Direction.REVERSE);
         shooter2.setDirection(DcMotor.Direction.FORWARD);
+
+        // zero pow behaviour brake
+        shooter1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
     } // init
@@ -45,6 +52,10 @@ public class Shooter extends SubsystemBase {
         shooter1.setPower(p);
         shooter2.setPower(p);
     } // shoot
+
+    public int getDownTick() {
+        return downTick;
+    }
 
 
     // set RPM of motor
@@ -77,6 +88,7 @@ public class Shooter extends SubsystemBase {
         shooter1.setTargetPosition(ticksPerRev);
         shooter1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
 
     public void setMotorVel(double p) {
         shooter1.setPower(p);

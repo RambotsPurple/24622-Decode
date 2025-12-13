@@ -61,23 +61,28 @@ A: Critical subsystems like vision (for AprilTags) and telemetry sensors need th
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.button.Button;
+import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.pedropathing.ftc.localization.RevHubIMU;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.config.Commands.CatapultShooterCommand;
+import org.firstinspires.ftc.teamcode.config.Commands.ImuReset;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.config.Commands.ShooterInitCommand;
+import org.firstinspires.ftc.teamcode.config.Commands.ShooterSetPowCommand;
 import org.firstinspires.ftc.teamcode.config.Util.*;
 import org.firstinspires.ftc.teamcode.config.Subsystem.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class Robot {
-    public final Alliance alliance;
+    public Alliance alliance;
     public CommandScheduler cs = CommandScheduler.getInstance();
 
 
@@ -91,12 +96,15 @@ public class Robot {
     public Intake intake;
     public Transfer transfer;
     public Drive drive;
+    private Telemetry telemetry;
 
+    public RevHubIMU imu;
 
 
     public static Pose endPose = new Pose();
 
-    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Gamepad  operator) {
+    //double player
+    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Gamepad  operator, Telemetry telemetry) {
          shooter = new Shooter(h);
          intake = new Intake(h);
          transfer = new Transfer(h);
@@ -106,6 +114,52 @@ public class Robot {
         this.alliance = alliance;
         this.driver = new GamepadEx(driver);
         this.operator = new GamepadEx(operator);
+        this.telemetry = telemetry;
+        //bulk caching to increase loop speeds
+//        hubs = h.getAll(LynxModule.class);
+//        for (LynxModule module : hubs) {
+//            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+//        }
+//
+//        loop.resetTimer();
+        cs.registerSubsystem(
+                shooter, transfer,intake,drive
+        );
+
+    }//end of teleop constructor
+
+    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Telemetry telemetry) {
+        shooter = new Shooter(h);
+        intake = new Intake(h);
+        transfer = new Transfer(h);
+        drive  = new Drive(h);
+        follower = Constants.createFollower(h);
+        follower.setStartingPose(new Pose(0,0,0));
+        this.alliance = alliance;
+        this.driver = new GamepadEx(driver);
+        this.telemetry = telemetry;
+        //bulk caching to increase loop speeds
+//        hubs = h.getAll(LynxModule.class);
+//        for (LynxModule module : hubs) {
+//            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+//        }
+//
+//        loop.resetTimer();
+        cs.registerSubsystem(
+                shooter, transfer,intake,drive
+        );
+
+    }//end of teleop constructor
+
+    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry) {
+        shooter = new Shooter(h);
+        intake = new Intake(h);
+        transfer = new Transfer(h);
+        drive  = new Drive(h);
+        follower = Constants.createFollower(h);
+        follower.setStartingPose(new Pose(0,0,0));
+        this.alliance = alliance;
+        this.telemetry = telemetry;
         //bulk caching to increase loop speeds
 //        hubs = h.getAll(LynxModule.class);
 //        for (LynxModule module : hubs) {
@@ -121,6 +175,8 @@ public class Robot {
 
     public void periodic() {
         drive.drive(-driver.getLeftX(),-driver.getLeftY(),driver.getRightX());
+        telemetry.addData("ticks",shooter.getCurrentPosition());
+        telemetry.update();
 //        follower.update();
 //        follower.setTeleOpDrive(
 //                -driver.getLeftX() ,
@@ -137,6 +193,7 @@ public class Robot {
 //            }
 //
 //            loopTime = (double) loop.getElapsedTime() / loops;
+
 //        }
 //        //bulk cache
         cs.run();
@@ -144,19 +201,53 @@ public class Robot {
     public void tStart(){
 //        follower.update();
 //        follower.startTeleopDrive(true);
+
     }
-    public void tele(){
+    public void tele() {
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
                 .whenActive(new IntakeCommand(intake, 1))
                 .whenInactive(new IntakeCommand(intake, 0));
 
-        operator.getGamepadButton(GamepadKeys.Button.A).whenReleased(new CatapultShooterCommand(shooter, 1));
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CatapultShooterCommand(shooter, 1));
+        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(new ShooterInitCommand(shooter, 1));
+
+        new Trigger(() -> operator.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0)
+                .whenActive(new ShooterSetPowCommand(shooter, 0.2));
+
+        new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new ShooterSetPowCommand(shooter, 0));
+
 
 //        if (operator.wasJustReleased(GamepadKeys.Button.A)) {
 //            cs.schedule(false, new CatapultShooterCommand(shooter, 1));
 //        }
+        new GamepadButton(driver, GamepadKeys.Button.X)
+                .whenPressed(new ImuReset(drive));
     }
-    public void stop() {
+
+    public void SoloTele(){
+        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
+                .whenActive(new IntakeCommand(intake, 1))
+                .whenInactive(new IntakeCommand(intake, 0));
+
+        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CatapultShooterCommand(shooter, 1));
+        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(new ShooterInitCommand(shooter, 1));
+
+        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0)
+                .whenActive(new ShooterSetPowCommand(shooter, 0.2));
+
+        new GamepadButton(driver, GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new ShooterSetPowCommand(shooter, 0));
+
+
+//        if (operator.wasJustReleased(GamepadKeys.Button.A)) {
+//            cs.schedule(false, new CatapultShooterCommand(shooter, 1));
+//        }
+        new GamepadButton(driver, GamepadKeys.Button.X)
+                .whenPressed(new ImuReset(drive));
+    }
+
+public void stop() {
     }//end of stop
 
     public double getLoopTime() {
