@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.config.Commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.pedropathing.ftc.localization.RevHubIMU;
 
-import org.firstinspires.ftc.teamcode.config.Subsystem.Drive;
+import org.firstinspires.ftc.teamcode.config.Subsystem.DriveSubsystem;
 
-public class ImuReset extends CommandBase {
-     Drive d;
-    public ImuReset(Drive drive){
+public class ImuResetCommand extends CommandBase {
+    DriveSubsystem d;
+    public ImuResetCommand(DriveSubsystem drive){
         d = drive;
         addRequirements(d);
 

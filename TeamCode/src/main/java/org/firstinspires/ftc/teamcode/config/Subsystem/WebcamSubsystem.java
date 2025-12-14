@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Webcam {
+public class WebcamSubsystem {
 
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
     private List<AprilTagDetection> detectedTags = new ArrayList<>();
     private Telemetry telemetry;
 
-    public Webcam(HardwareMap hw, Telemetry telemetry) {
+    public WebcamSubsystem(HardwareMap hw, Telemetry telemetry) {
         aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)

@@ -1,17 +1,14 @@
 
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.tele;
 
-import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.pedropathing.ftc.localization.RevHubIMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.config.Robot;
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 
-@TeleOp(name = "solo tele")
-public class solo extends OpMode {
+@TeleOp(name = "real teleop not fake :D - RUN THIS ONE")
+public class test extends OpMode {
     Robot robot;
 
 //    GamepadEx driver = new GamepadEx(gamepad1);
@@ -19,7 +16,7 @@ public class solo extends OpMode {
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap, Alliance.BLUE, gamepad1, telemetry);
+        robot = new Robot(hardwareMap, Alliance.BLUE, gamepad1, gamepad2, telemetry);
     }
 
     @Override
@@ -30,7 +27,7 @@ public class solo extends OpMode {
     @Override
     public void loop() {
         robot.periodic();
-        robot.SoloTele();
+        robot.tele();
     }
 
 } // linearOpMod

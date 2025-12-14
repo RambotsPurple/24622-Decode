@@ -2,20 +2,20 @@ package org.firstinspires.ftc.teamcode.config.Commands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
-import org.firstinspires.ftc.teamcode.config.Subsystem.Intake;
+import org.firstinspires.ftc.teamcode.config.Subsystem.IntakeSubsystem;
 
 public class IntakeCommand extends InstantCommand {
-    private final Intake intake;
+    private final IntakeSubsystem intakeSubsystem;
     private double pow;
-    public IntakeCommand(Intake sub,double power){
-        intake = sub;
+    public IntakeCommand(IntakeSubsystem sub, double power){
+        intakeSubsystem = sub;
         pow = power;
-        addRequirements(intake);
+        addRequirements(intakeSubsystem);
     }
 
     @Override
     public void initialize() {
-        intake.run(pow);
+        intakeSubsystem.run(pow);
     }
 
 

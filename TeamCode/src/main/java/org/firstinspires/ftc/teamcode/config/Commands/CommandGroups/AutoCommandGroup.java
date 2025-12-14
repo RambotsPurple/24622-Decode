@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.config.Commands.CommandGroups;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.config.pedroPathing.Tuning.follower;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.config.Commands.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.config.Paths.Paths;
-import org.firstinspires.ftc.teamcode.config.Subsystem.Drive;
-import org.firstinspires.ftc.teamcode.config.Subsystem.Intake;
 
 /**
  * A complex auto command that drives forward,

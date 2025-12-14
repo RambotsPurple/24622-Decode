@@ -2,20 +2,20 @@ package org.firstinspires.ftc.teamcode.config.Commands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
-import org.firstinspires.ftc.teamcode.config.Subsystem.Shooter;
+import org.firstinspires.ftc.teamcode.config.Subsystem.ShooterSubsystem;
 
 public class ShooterSetPowCommand extends InstantCommand {
-    private final Shooter shooter;
+    private final ShooterSubsystem shooterSubsystem;
     private double pow;
-    public ShooterSetPowCommand(Shooter s,double power){
-        shooter = s;
+    public ShooterSetPowCommand(ShooterSubsystem s, double power){
+        shooterSubsystem = s;
         pow = power;
-        addRequirements(shooter);
+        addRequirements(shooterSubsystem);
     }
 
     @Override
     public void initialize() {
-        shooter.setPower(pow);
+        shooterSubsystem.setPower(pow);
     }
 
 

@@ -11,7 +11,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class Drive extends SubsystemBase{
+public class DriveSubsystem extends SubsystemBase{
     private DcMotorEx frontLeft, frontRight, rearLeft, rearRight;
     private IMU imu;
     private double heading;
@@ -20,7 +20,7 @@ public class Drive extends SubsystemBase{
 
 
 
-    public Drive (HardwareMap hw) {
+    public DriveSubsystem (HardwareMap hw) {
         frontLeft = hw.get(DcMotorEx.class, "leftFront");
         frontRight = hw.get(DcMotorEx.class, "rightFront");
         rearLeft = hw.get(DcMotorEx.class, "leftBack");

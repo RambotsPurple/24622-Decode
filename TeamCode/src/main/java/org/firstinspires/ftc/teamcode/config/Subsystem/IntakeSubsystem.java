@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
-public class Intake extends SubsystemBase{
+public class IntakeSubsystem extends SubsystemBase{
 
     // TODO check motorex vs motor
     private DcMotorEx intake;
 
-    public Intake (HardwareMap hw){
+    public IntakeSubsystem(HardwareMap hw){
         intake = hw.get(DcMotorEx.class, "Intake");
 
 

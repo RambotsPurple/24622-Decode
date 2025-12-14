@@ -2,14 +2,13 @@ package org.firstinspires.ftc.teamcode.config.Subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class Shooter extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
 
     private DcMotorEx shooter1, shooter2;
     // make ramp motor or servo
@@ -27,7 +26,7 @@ public class Shooter extends SubsystemBase {
 
     private int lastPos = 0;
 
-    public Shooter(HardwareMap hw) {
+    public ShooterSubsystem(HardwareMap hw) {
         shooter1 = hw.get(DcMotorEx.class, "lShoot");
         shooter2 = hw.get(DcMotorEx.class, "rShoot");
 
