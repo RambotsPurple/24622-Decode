@@ -7,12 +7,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private DcMotorEx shooter1, shooter2;
+    public DcMotorEx shooter1, shooter2;
     // make ramp motor or servo
-
+    public Telemetry tele;
 
     private double Kp = 0.001, Ki = 0, Kd = 0; // tune these
 
@@ -26,17 +27,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private int lastPos = 0;
 
-    public ShooterSubsystem(HardwareMap hw) {
+    public ShooterSubsystem(HardwareMap hw, Telemetry t) {
         shooter1 = hw.get(DcMotorEx.class, "lShoot");
         shooter2 = hw.get(DcMotorEx.class, "rShoot");
-
-        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        tele = t;
+        shooter1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
         shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Orientation for shooter
-        shooter1.setDirection(DcMotor.Direction.REVERSE);
+        shooter1.setDirection(DcMotor.Direction.FORWARD);
         shooter2.setDirection(DcMotor.Direction.FORWARD);
 
         // zero pow behaviour brake
@@ -48,6 +49,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // this is identical to setMotorVel() but use setMotorVel instead of this one ok
     public void setPower(double p) {
+        tele.addData("input", p);
+        tele.update();
         shooter1.setPower(p);
         shooter2.setPower(p);
     } // shoot
@@ -57,7 +60,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
 
-    // set RPM of motor
+    // set RPM of motorv
     public void setRPM(int RPM) {
         shooter1.setVelocity(RPM * 6, AngleUnit.DEGREES);
     }
@@ -90,6 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
     public void setMotorVel(double p) {
+
         shooter1.setPower(p);
         shooter2.setPower(p);
     }

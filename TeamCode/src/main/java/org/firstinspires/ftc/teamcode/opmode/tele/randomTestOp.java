@@ -18,7 +18,7 @@ public class randomTestOp extends OpMode {
     @Override
     public void init() {
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
-        shooterSubsystem = new ShooterSubsystem(hardwareMap);
+        shooterSubsystem = new ShooterSubsystem(hardwareMap,telemetry);
 
     }
 

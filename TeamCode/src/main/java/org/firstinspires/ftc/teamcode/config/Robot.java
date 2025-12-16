@@ -95,7 +95,7 @@ public class Robot {
     public ShooterSubsystem shooterSubsystem;
     public IntakeSubsystem intakeSubsystem;
     public TransferSubsystem transferSubsystem;
-    public DriveSubsystem drive;
+    public DriveSubsystem driveSubsystem;
     private Telemetry telemetry;
 
     public RevHubIMU imu;
@@ -105,10 +105,10 @@ public class Robot {
 
     //double player
     public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Gamepad  operator, Telemetry telemetry) {
-         shooterSubsystem = new ShooterSubsystem(h);
+         shooterSubsystem = new ShooterSubsystem(h,telemetry);
          intakeSubsystem = new IntakeSubsystem(h);
          transferSubsystem = new TransferSubsystem(h);
-         drive  = new DriveSubsystem(h);
+        driveSubsystem  = new DriveSubsystem(h);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -123,16 +123,16 @@ public class Robot {
 //
 //        loop.resetTimer();
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,drive
+                shooterSubsystem, transferSubsystem, intakeSubsystem,driveSubsystem
         );
 
     }//end of teleop constructor
 
     public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Telemetry telemetry) {
-        shooterSubsystem = new ShooterSubsystem(h);
+        shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
-        drive  = new DriveSubsystem(h);
+        driveSubsystem  = new DriveSubsystem(h);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -146,16 +146,16 @@ public class Robot {
 //
 //        loop.resetTimer();
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,drive
+                shooterSubsystem, transferSubsystem, intakeSubsystem,driveSubsystem
         );
 
     }//end of teleop constructor
 
     public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry) {
-        shooterSubsystem = new ShooterSubsystem(h);
+        shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
-        drive  = new DriveSubsystem(h);
+        driveSubsystem  = new DriveSubsystem(h);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -168,14 +168,16 @@ public class Robot {
 //
 //        loop.resetTimer();
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,drive
+                shooterSubsystem, transferSubsystem, intakeSubsystem,driveSubsystem
         );
 
     }//end of teleop constructor
 
     public void periodic() {
-        drive.drive(-driver.getLeftX(),-driver.getLeftY(),driver.getRightX());
+        driveSubsystem.drive(-driver.getLeftX(),-driver.getLeftY(),driver.getRightX());
         telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
+        telemetry.addData("input",shooterSubsystem.shooter1.getPower());
+        telemetry.addData("heading",driveSubsystem.getAngle());
         telemetry.update();
 //        follower.update();
 //        follower.setTeleOpDrive(
@@ -211,18 +213,18 @@ public class Robot {
         operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CatapultShooterCommand(shooterSubsystem, 1));
         operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(new ShooterInitCommand(shooterSubsystem, 1));
 
-        new Trigger(() -> operator.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0)
-                .whenActive(new ShooterSetPowCommand(shooterSubsystem, 0.2));
+        new Trigger(() -> operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
+                .whenActive(new ShooterSetPowCommand(shooterSubsystem, 1))
+                .whenInactive(new ShooterSetPowCommand(shooterSubsystem, 0));
 
-        new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new ShooterSetPowCommand(shooterSubsystem, 0));
+
 
 
 //        if (operator.wasJustReleased(GamepadKeys.Button.A)) {
 //            cs.schedule(false, new CatapultShooterCommand(shooter, 1));
 //        }
-        new GamepadButton(driver, GamepadKeys.Button.X)
-                .whenPressed(new ImuResetCommand(drive));
+        driver.getGamepadButton(GamepadKeys.Button.Y)
+                .whenPressed(new ImuResetCommand(driveSubsystem));
     }
 
     public void SoloTele(){
@@ -243,8 +245,7 @@ public class Robot {
 //        if (operator.wasJustReleased(GamepadKeys.Button.A)) {
 //            cs.schedule(false, new CatapultShooterCommand(shooter, 1));
 //        }
-        new GamepadButton(driver, GamepadKeys.Button.X)
-                .whenPressed(new ImuResetCommand(drive));
+
     }
 
 public void stop() {

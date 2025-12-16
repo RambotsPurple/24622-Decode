@@ -141,7 +141,6 @@ public class SimpleAuto extends LinearOpMode {
         // Initialize the drive system variables.
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-        Robot r = new Robot(hardwareMap, Alliance.BLUE, telemetry);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -187,7 +186,7 @@ public class SimpleAuto extends LinearOpMode {
                     driveStraight(DRIVE_SPEED, 5, 0.0);    // Drive Forward 24"
                     turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
                     holdHeading( TURN_SPEED, -45.0, 3);   // Hold -45 Deg heading for a 1/2 second
-                     driveStraight(DRIVE_SPEED, 5, 0.0);    // Drive Forward 24"
+                    driveStraight(DRIVE_SPEED, 5, 0.0);    // Drive Forward 24"
 
 
 

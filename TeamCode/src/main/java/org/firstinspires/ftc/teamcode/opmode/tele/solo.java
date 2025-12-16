@@ -17,6 +17,12 @@ public class solo extends OpMode {
     @Override
     public void init() {
         robot = new Robot(hardwareMap, Alliance.BLUE, gamepad1, telemetry);
+        if(gamepad1.a){
+            robot.alliance = Alliance.RED;
+        }else{
+            robot.alliance = Alliance.BLUE;
+        }
+        robot.SoloTele();
     }
 
     @Override
@@ -27,7 +33,7 @@ public class solo extends OpMode {
     @Override
     public void loop() {
         robot.periodic();
-        robot.SoloTele();
+
     }
 
 } // linearOpMod

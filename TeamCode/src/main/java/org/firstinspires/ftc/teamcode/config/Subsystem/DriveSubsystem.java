@@ -30,8 +30,8 @@ public class DriveSubsystem extends SubsystemBase{
 
         imu.initialize(
                 new IMU.Parameters(new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
-                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
                 ))
         );
 
@@ -95,7 +95,9 @@ public class DriveSubsystem extends SubsystemBase{
 //        direction = 0;
     }
 
-
+public double getAngle(){
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+}
 
 //    public double getAngle() {
 //        // We experimentally determined the Z axis is the axis we want to use for heading angle.
