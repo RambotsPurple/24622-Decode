@@ -8,5 +8,5 @@ public enum state {
     Locked,
     Notarg,
 
-    Spin,
+    rev,
 }

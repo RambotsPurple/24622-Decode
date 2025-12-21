@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.config.Commands.CatapultShooterCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.config.Subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.config.Subsystem.ShooterSubsystem;
