@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.config;
 import static org.firstinspires.ftc.teamcode.config.pedroPathing.Tuning.follower;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -18,8 +17,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.config.Commands.ImuResetCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.config.Commands.ShooterInitCommand;
-import org.firstinspires.ftc.teamcode.config.Commands.ShooterSetPowCommand;
 import org.firstinspires.ftc.teamcode.config.Util.*;
 import org.firstinspires.ftc.teamcode.config.Subsystem.*;
 import org.firstinspires.ftc.teamcode.config.pedroPathing.Constants;
@@ -28,14 +25,13 @@ import java.util.List;
 
 public class Robot {
 
-    private  List<LynxModule> allHubs;
+    private final List<LynxModule> allHubs;
     private final Timer loop = new Timer();
     public Alliance alliance;
     public CommandScheduler cs = CommandScheduler.getInstance();
 
 
-    protected GamepadEx driver, operator;
-//    private final List<LynxModule> hubs;
+    protected GamepadEx driver;
 
 
 
@@ -44,11 +40,7 @@ public class Robot {
     public IntakeSubsystem intakeSubsystem;
     public TransferSubsystem transferSubsystem;
     public DriveSubsystem driveSubsystem;
-    private Telemetry telemetry;
-
-
-
-    public static Pose endPose = new Pose();
+    private final Telemetry telemetry;
 
 
     /**
@@ -59,19 +51,16 @@ public class Robot {
      * @param h
      * @param alliance
      * @param driver
-     * @param operator
      * @param telemetry
      * */
-    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Gamepad  operator, Telemetry telemetry) {
+    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Telemetry telemetry) {
          shooterSubsystem = new ShooterSubsystem(h,telemetry);
          intakeSubsystem = new IntakeSubsystem(h);
          transferSubsystem = new TransferSubsystem(h);
-        driveSubsystem  = new DriveSubsystem(h);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
         this.driver = new GamepadEx(driver);
-        this.operator = new GamepadEx(operator);
         this.telemetry = telemetry;
 
         allHubs = h.getAll(LynxModule.class);
@@ -81,7 +70,7 @@ public class Robot {
         loop.resetTimer();
 
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,driveSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem
         );
 
     }//end of teleop constructor
@@ -95,11 +84,10 @@ public class Robot {
      * @param telemetry
      */
 
-    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry, Pose p) {
+    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry){
         shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
-        driveSubsystem  = new DriveSubsystem(h);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -113,13 +101,13 @@ public class Robot {
 
 
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,driveSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem
         ); // end of cs
 
     }//end of teleop constructor
 
-    public void periodic() {
-
+    public void tPeriodic() {
+        teleTelemetry();
         //every 5 milliseconds clear the cache
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
@@ -128,23 +116,20 @@ public class Robot {
         }//end of if
 
         driveSubsystem.drive(-driver.getLeftX(),-driver.getLeftY(),driver.getRightX());
-        telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
-        telemetry.addData("input",shooterSubsystem.shooter1.getPower());
-        telemetry.addData("heading",driveSubsystem.getAngle());
-        telemetry.update();
-        //follower.update();
-        //follower.setTeleOpDrive(
-        //        -driver.getLeftX() ,
-        //        -driver.getLeftY() ,
-        //        -driver.getRightX(),
-        //        false
-        //);
 
+        follower.update();
+        follower.setTeleOpDrive(
+                -driver.getLeftX() ,
+                -driver.getLeftY() ,
+                -driver.getRightX(),
+                false
+        );
+        telemetry.update();
         cs.run();
     }//end of periodic
     public void tStart(){
-        //follower.update();
-        //follower.startTeleopDrive(true);
+        follower.update();
+        follower.startTeleopDrive(true);
 
     }// end of tStart
 
@@ -155,17 +140,38 @@ public class Robot {
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
 
 
-
-        new Trigger(() -> operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
-                .whenActive(new ShooterSetPowCommand(shooterSubsystem, 1))
-                .whenInactive(new ShooterSetPowCommand(shooterSubsystem, 0));
+//
+//        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
+//                .whenActive(new ShooterSetPowCommand(shooterSubsystem, 1))
+//                .whenInactive(new ShooterSetPowCommand(shooterSubsystem, 0));
 
         driver.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(new ImuResetCommand(driveSubsystem));
+
     }//end of tele method
 
+    public void teleTelemetry() {
+//        telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
+        telemetry.addData("input",shooterSubsystem.shooter1.getPower());
+        telemetry.addData("heading",driveSubsystem.getAngle());
+    }//end of teleTelemetry
 
+    public void autoTelemetry(){
 
+    }//end of autoTelemetry
 
+    public void aPeriodic(){
+        autoTelemetry();
+        if (loop.getElapsedTime() % 5 == 0) {
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }//end of for
+        }//end of if
+        follower.update();
+        cs.run();
+    }//end of aPeriodic
 
+    public void aStart(){
+
+    }//end of aStart
 }//end of Robot

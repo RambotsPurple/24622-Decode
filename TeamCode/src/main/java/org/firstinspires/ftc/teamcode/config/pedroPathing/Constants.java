@@ -6,8 +6,10 @@ import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.Encoder;
 import com.pedropathing.ftc.localization.constants.OTOSConstants;
+import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.ftc.localization.constants.ThreeWheelIMUConstants;
 import com.pedropathing.paths.PathConstraints;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -20,35 +22,24 @@ public class   Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(8);
     //@TODO get the vel from forward Velocity tuner
-//            .xVelocity(42.807841477933664);
+//            .xVelocity(velocity);
     //@Todo get teh vel from lateral vel tuner
     //.yVelocity(velocity)
     //@Todo get from FZPA
     //.forwardZeroPowerAcceleration(deceleration)
     //@Todo get from LZPA
     //.lateralZeroPowerAcceleration(deceleration)
-//    .useSecondaryTranslationalPIDF(true)
-//    .useSecondaryHeadingPIDF(true)
-//    .useSecondaryDrivePIDF(true)
-//    @TODO PLEASE FOR THE LOVE OF DEFENSE CONTRACTORS READ THE PID DOCS AND TUNING TUTS
-//https://pedropathing.com/docs/pathing/tuning/pids
 
-    //    @TODO find the relative measurements from the center dummy
-    public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
-            .forwardTicksToInches(.0022731177571701576)
-            .strafeTicksToInches(.002273303910607243)
-            .turnTicksToInches(.00198943412832918)
-            .leftPodY(2)
-            .rightPodY(-2)
-            .strafePodX(0)
-            .leftEncoder_HardwareMapName("rightFront")
-            .rightEncoder_HardwareMapName("leftBack")
-            .strafeEncoder_HardwareMapName("leftFront")
-            .leftEncoderDirection(Encoder.REVERSE)
-            .rightEncoderDirection(Encoder.FORWARD)
-            .strafeEncoderDirection(Encoder.REVERSE)
-            .IMU_HardwareMapName("imu")
-            .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+
+    //    @TODO tune
+    public static PinpointConstants localizerConstants = new PinpointConstants()
+            .forwardPodY(-5)
+            .strafePodX(0.5)
+            .distanceUnit(DistanceUnit.INCH)
+            .hardwareMapName("pinpoint")
+            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("rightFront")
@@ -64,12 +55,12 @@ public class   Constants {
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
-                .threeWheelIMULocalizer(localizerConstants)
+                .pinpointLocalizer(localizerConstants)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
 
                 .build();
-    }
+    }//end of createFollower
 
 
-}
+}//end of Constants class
