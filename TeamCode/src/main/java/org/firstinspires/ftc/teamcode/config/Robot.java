@@ -40,6 +40,8 @@ public class Robot {
     public IntakeSubsystem intakeSubsystem;
     public TransferSubsystem transferSubsystem;
     public DriveSubsystem driveSubsystem;
+
+    public LimeLightSubsystem limeLightSubsystem;
     private final Telemetry telemetry;
 
 
@@ -57,6 +59,7 @@ public class Robot {
          shooterSubsystem = new ShooterSubsystem(h,telemetry);
          intakeSubsystem = new IntakeSubsystem(h);
          transferSubsystem = new TransferSubsystem(h);
+        limeLightSubsystem = new LimeLightSubsystem(h,alliance);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -70,7 +73,7 @@ public class Robot {
         loop.resetTimer();
 
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem
         );
 
     }//end of teleop constructor
@@ -88,6 +91,8 @@ public class Robot {
         shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
+        limeLightSubsystem = new LimeLightSubsystem(h,alliance);
+
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -101,7 +106,7 @@ public class Robot {
 
 
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem
         ); // end of cs
 
     }//end of teleop constructor
