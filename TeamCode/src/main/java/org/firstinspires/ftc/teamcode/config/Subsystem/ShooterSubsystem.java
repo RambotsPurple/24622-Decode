@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -14,12 +15,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public DcMotorEx shooter1, shooter2;
 
+    double f = 0 ;
+    double p = 0;
+
     public ShooterSubsystem(HardwareMap hw, Telemetry t) {
         shooter1 = hw.get(DcMotorEx.class, "lShoot");
         shooter2 = hw.get(DcMotorEx.class, "rShoot");
 
-        shooter1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //issue with shooter2 when encoder cable not connected
@@ -28,10 +32,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // Orientation for shooter
         shooter1.setDirection(DcMotor.Direction.REVERSE);
         shooter2.setDirection(DcMotor.Direction.FORWARD);
-
-        // zero pow behaviour brake
-        shooter1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(p,0,0,f);
+        shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
     } // init
 
@@ -59,7 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setMotorVel(double p) {
         shooter1.setPower(p);
         shooter2.setPower(p);
-    }
+    }//end of setMotorVel
 
 
 

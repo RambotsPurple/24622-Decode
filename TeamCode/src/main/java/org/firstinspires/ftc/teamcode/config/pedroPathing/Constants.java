@@ -20,9 +20,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class   Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(8);
+    //@TODO measure the mass
+    .mass(0);
     //@TODO get the vel from forward Velocity tuner
-//            .xVelocity(velocity);
+    // .xVelocity(velocity);
     //@Todo get teh vel from lateral vel tuner
     //.yVelocity(velocity)
     //@Todo get from FZPA
@@ -33,6 +34,7 @@ public class   Constants {
 
     //    @TODO tune
     public static PinpointConstants localizerConstants = new PinpointConstants()
+            // manual change the offsets
             .forwardPodY(-5)
             .strafePodX(0.5)
             .distanceUnit(DistanceUnit.INCH)
@@ -42,10 +44,10 @@ public class   Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("rightFront")
-            .rightRearMotorName("rightBack")
-            .leftRearMotorName("leftBack")
-            .leftFrontMotorName("leftFront")
+            .rightFrontMotorName("rf")
+            .rightRearMotorName("rb")
+            .leftRearMotorName("lb")
+            .leftFrontMotorName("lf")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
@@ -58,7 +60,6 @@ public class   Constants {
                 .pinpointLocalizer(localizerConstants)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
-
                 .build();
     }//end of createFollower
 

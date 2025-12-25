@@ -5,6 +5,8 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
+import org.firstinspires.ftc.teamcode.config.Util.Alliance;
+
 public class autoCloseBLue {
     public static class Paths {
 
@@ -19,7 +21,7 @@ public class autoCloseBLue {
         public PathChain launch3;
         public PathChain reset;
 
-        public Paths(Follower follower) {
+        public Paths(Follower follower, Alliance alliance) {
             launch1 = follower
                     .pathBuilder()
                     .addPath(

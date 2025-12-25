@@ -7,15 +7,17 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.lynx.LynxModule;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.config.Commands.ImuResetCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.config.Util.*;
 import org.firstinspires.ftc.teamcode.config.Subsystem.*;
@@ -31,22 +33,35 @@ public class Robot {
     public CommandScheduler cs = CommandScheduler.getInstance();
 
 
+
     protected GamepadEx driver;
-
-
-
 
     public ShooterSubsystem shooterSubsystem;
     public IntakeSubsystem intakeSubsystem;
     public TransferSubsystem transferSubsystem;
     public DriveSubsystem driveSubsystem;
 
+
     public LimeLightSubsystem limeLightSubsystem;
     private final Telemetry telemetry;
+    public state state;
+
+
+    //for pd control for auto alignment
+    public double error = 0 ;
+    public double lastError = 0 ;
+
+    public double kp = 0;
+    public  double kd =0;
+
+
+    public Follower getFollower(){
+        return follower;
+    }
 
 
     /**
-     * This constructor below is for a double player teleop on either side
+     * This constructor below is for a single player auton anywhere
      * of the field
      *
      * @author Alex
@@ -55,6 +70,7 @@ public class Robot {
      * @param driver
      * @param telemetry
      * */
+    
     public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Telemetry telemetry) {
          shooterSubsystem = new ShooterSubsystem(h,telemetry);
          intakeSubsystem = new IntakeSubsystem(h);
@@ -71,12 +87,13 @@ public class Robot {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
         loop.resetTimer();
-
         cs.registerSubsystem(
                 shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem
         );
 
     }//end of teleop constructor
+
+
 
     /**
      * The constructor below is for auto on any side of the field
@@ -87,7 +104,7 @@ public class Robot {
      * @param telemetry
      */
 
-    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry){
+    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry, PathChain PC){
         shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
@@ -95,6 +112,7 @@ public class Robot {
 
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
+        // pc(follower);
         this.alliance = alliance;
         this.telemetry = telemetry;
 
@@ -104,7 +122,6 @@ public class Robot {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }//end of for
 
-
         cs.registerSubsystem(
                 shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem
         ); // end of cs
@@ -113,6 +130,7 @@ public class Robot {
 
     public void tPeriodic() {
         teleTelemetry();
+
         //every 5 milliseconds clear the cache
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
@@ -120,38 +138,61 @@ public class Robot {
             }//end of for
         }//end of if
 
-        driveSubsystem.drive(-driver.getLeftX(),-driver.getLeftY(),driver.getRightX());
 
-        follower.update();
+
+        //logic for auto tracking
+        double turn;
+
+        if(state != state.none){
+            ElapsedTime timer = new ElapsedTime();
+            error = limeLightSubsystem.getHoriError();
+            turn = trackTo(error, timer);
+        }else{
+            turn = -driver.getRightX();
+        }//end of else
+
+        //params for drive
         follower.setTeleOpDrive(
                 -driver.getLeftX() ,
                 -driver.getLeftY() ,
-                -driver.getRightX(),
+                turn,
                 false
         );
+
+        follower.update();
         telemetry.update();
         cs.run();
     }//end of periodic
     public void tStart(){
+        state = state.idle;
+        limeLightSubsystem.lStart();
         follower.update();
         follower.startTeleopDrive(true);
 
     }// end of tStart
 
+    /**
+     * We use the error from our limelight for our pid and use that to adjust
+     * to the april tag accordingly
+     * @param error
+     * @param time
+     * @return pow
+     */
+    public double trackTo(double error, ElapsedTime time){
+        double d = (error - lastError) / time.seconds();
+        double pow = (kp*error)+(kd*d);
+
+        lastError = error;
+        time.reset();
+        return pow;
+    }
     public void tele() {
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
                 .whenActive(new IntakeCommand(intakeSubsystem, 1))
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
-
-
-//
-//        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
-//                .whenActive(new ShooterSetPowCommand(shooterSubsystem, 1))
-//                .whenInactive(new ShooterSetPowCommand(shooterSubsystem, 0));
-
-        driver.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new ImuResetCommand(driveSubsystem));
+        // driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+        //         .toggleWhenActive(state = state.idle, state = state.none);
 
     }//end of tele method
 
@@ -177,6 +218,7 @@ public class Robot {
     }//end of aPeriodic
 
     public void aStart(){
-
+        state = state.idle;
+        limeLightSubsystem.lStart();
     }//end of aStart
 }//end of Robot
