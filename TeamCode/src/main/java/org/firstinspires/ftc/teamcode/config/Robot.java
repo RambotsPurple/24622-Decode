@@ -40,7 +40,7 @@ public class Robot {
     public IntakeSubsystem intakeSubsystem;
     public TransferSubsystem transferSubsystem;
     public DriveSubsystem driveSubsystem;
-
+    public HoodSubsystem hoodSubsystem;
 
     public LimeLightSubsystem limeLightSubsystem;
     private final Telemetry telemetry;
@@ -76,6 +76,7 @@ public class Robot {
          intakeSubsystem = new IntakeSubsystem(h);
          transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
+        hoodSubsystem = new HoodSubsystem(h,telemetry);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -85,10 +86,11 @@ public class Robot {
         allHubs = h.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        }
+        }//end of for
+
         loop.resetTimer();
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem
         );
 
     }//end of teleop constructor
@@ -109,6 +111,7 @@ public class Robot {
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
+        hoodSubsystem = new HoodSubsystem(h,telemetry);
 
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
@@ -123,7 +126,7 @@ public class Robot {
         }//end of for
 
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem
         ); // end of cs
 
     }//end of teleop constructor
@@ -185,7 +188,7 @@ public class Robot {
         lastError = error;
         time.reset();
         return pow;
-    }
+    }//end of trackTo
     public void tele() {
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)

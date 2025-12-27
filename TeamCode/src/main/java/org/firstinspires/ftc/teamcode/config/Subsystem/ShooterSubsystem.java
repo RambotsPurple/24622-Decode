@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.arcrobotics.ftclib.util.LUT;
+import com.arcrobotics.ftclib.util.InterpLUT;
+
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -14,11 +17,21 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ShooterSubsystem extends SubsystemBase {
 
     public DcMotorEx shooter1, shooter2;
-
+    public InterpLUT lutShooter;
     double f = 0 ;
     double p = 0;
 
     public ShooterSubsystem(HardwareMap hw, Telemetry t) {
+        //need to go on the field a tune key points top of the key inside paint and from half
+        lutShooter = new InterpLUT();
+        // lutShooter.add(1.1, 0.2);
+        // lutShooter.add(2.7, .5);
+        // lutShooter.add(3.6, 0.75);
+        // lutShooter.add(4.1, 0.9);
+        // lutShooter.add(5, 1);
+//generating final equation
+        lutShooter.createLUT(); //calc the cubuic
+
         shooter1 = hw.get(DcMotorEx.class, "lShoot");
         shooter2 = hw.get(DcMotorEx.class, "rShoot");
 
@@ -34,6 +47,8 @@ public class ShooterSubsystem extends SubsystemBase {
         shooter2.setDirection(DcMotor.Direction.FORWARD);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(p,0,0,f);
         shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
 
     } // init
 
@@ -41,6 +56,11 @@ public class ShooterSubsystem extends SubsystemBase {
         shooter1.setPower(p);
         shooter2.setPower(p);
     } // shoot
+
+    //Init the Look up table
+
+//Adding each val with a key
+
 
 
 

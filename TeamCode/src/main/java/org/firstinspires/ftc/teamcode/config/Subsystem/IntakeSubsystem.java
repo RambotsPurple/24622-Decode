@@ -8,7 +8,6 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase{
 
-    // TODO check motorex vs motor
     private DcMotorEx intake;
 
     public IntakeSubsystem(HardwareMap hw){
@@ -19,7 +18,6 @@ public class IntakeSubsystem extends SubsystemBase{
         intake.setDirection(DcMotor.Direction.REVERSE);
 
     } // init
-
 
     public void run(double power){
         intake.setPower(power);
