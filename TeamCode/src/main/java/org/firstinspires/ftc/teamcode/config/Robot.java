@@ -32,8 +32,6 @@ public class Robot {
     public Alliance alliance;
     public CommandScheduler cs = CommandScheduler.getInstance();
 
-
-
     protected GamepadEx driver;
 
     public ShooterSubsystem shooterSubsystem;
@@ -46,14 +44,12 @@ public class Robot {
     private final Telemetry telemetry;
     public state state;
 
-
     //for pd control for auto alignment
     public double error = 0 ;
     public double lastError = 0 ;
 
     public double kp = 0;
     public  double kd =0;
-
 
     public Follower getFollower(){
         return follower;
@@ -65,16 +61,15 @@ public class Robot {
      * of the field
      *
      * @author Alex
-     * @param h
-     * @param alliance
-     * @param driver
-     * @param telemetry
-     * */
-    
+     * @param h hardwaremap
+     * @param alliance blue or red
+     * @param driver driver gamepad
+     * @param telemetry allows for telemetry output
+     **/
     public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Telemetry telemetry) {
-         shooterSubsystem = new ShooterSubsystem(h,telemetry);
-         intakeSubsystem = new IntakeSubsystem(h);
-         transferSubsystem = new TransferSubsystem(h);
+        shooterSubsystem = new ShooterSubsystem(h,telemetry);
+        intakeSubsystem = new IntakeSubsystem(h);
+        transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
         hoodSubsystem = new HoodSubsystem(h,telemetry);
         follower = Constants.createFollower(h);
@@ -93,9 +88,7 @@ public class Robot {
                 shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem
         );
 
-    }//end of teleop constructor
-
-
+    } //end of teleop constructor
 
     /**
      * The constructor below is for auto on any side of the field
@@ -131,6 +124,9 @@ public class Robot {
 
     }//end of teleop constructor
 
+    /**
+     * loops periodically during teleOp
+     */
     public void tPeriodic() {
         teleTelemetry();
 
@@ -138,21 +134,19 @@ public class Robot {
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
-            }//end of for
-        }//end of if
+            }
+        }
 
-
-
-        //logic for auto tracking
+        // logic for auto tracking
         double turn;
 
-        if(state != state.none){
+        if (state != state.none){
             ElapsedTime timer = new ElapsedTime();
             error = limeLightSubsystem.getHoriError();
             turn = trackTo(error, timer);
-        }else{
+        } else {
             turn = -driver.getRightX();
-        }//end of else
+        }
 
         //params for drive
         follower.setTeleOpDrive(
@@ -165,14 +159,17 @@ public class Robot {
         follower.update();
         telemetry.update();
         cs.run();
-    }//end of periodic
-    public void tStart(){
+    } //end of periodic
+
+    /**
+     * Run on start of teleOp
+     */
+    public void tStart() {
         state = state.idle;
         limeLightSubsystem.lStart();
         follower.update();
         follower.startTeleopDrive(true);
-
-    }// end of tStart
+    } // end of tStart
 
     /**
      * We use the error from our limelight for our pid and use that to adjust
@@ -181,14 +178,18 @@ public class Robot {
      * @param time
      * @return pow
      */
-    public double trackTo(double error, ElapsedTime time){
+    public double trackTo(double error, ElapsedTime time) {
         double d = (error - lastError) / time.seconds();
         double pow = (kp*error)+(kd*d);
 
         lastError = error;
         time.reset();
         return pow;
-    }//end of trackTo
+    } // end of trackTo
+
+    /**
+     * Sets up listeners at the start of teleOp
+     */
     public void tele() {
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
@@ -197,31 +198,43 @@ public class Robot {
         // driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
         //         .toggleWhenActive(state = state.idle, state = state.none);
 
-    }//end of tele method
+    } //end of tele method
 
+    /**
+     * Telemetry data for teleOp
+     */
     public void teleTelemetry() {
-//        telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
+        // telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
         telemetry.addData("input",shooterSubsystem.shooter1.getPower());
         telemetry.addData("heading",driveSubsystem.getAngle());
-    }//end of teleTelemetry
+    } //end of teleTelemetry
 
-    public void autoTelemetry(){
+    /**
+     * Telemetry data for autoOp
+     */
+    public void autoTelemetry() {
 
-    }//end of autoTelemetry
+    } //end of autoTelemetry
 
+    /**
+     * loops periodically during autoOp
+     */
     public void aPeriodic(){
         autoTelemetry();
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
-            }//end of for
-        }//end of if
+            }
+        }
         follower.update();
         cs.run();
-    }//end of aPeriodic
+    } //end of aPeriodic
 
+    /**
+     * Runs on the start of autoOp
+     */
     public void aStart(){
         state = state.idle;
         limeLightSubsystem.lStart();
-    }//end of aStart
-}//end of Robot
+    } //end of aStart
+} //end of Robot

@@ -21,8 +21,10 @@ public class DriveSubsystem extends SubsystemBase{
     private double lastAngles;
     private double angles;
 
-
-
+    /**
+     * Constructor
+     * @param hw Hardwaremap
+     */
     public DriveSubsystem (HardwareMap hw) {
         frontLeft = hw.get(DcMotorEx.class, "leftFront");
         frontRight = hw.get(DcMotorEx.class, "rightFront");
@@ -52,11 +54,14 @@ public class DriveSubsystem extends SubsystemBase{
         resetAngle();
     } // init
 
-
-
+    /**
+     * Drive the robot based on gamepad input
+     * @param x
+     * @param y
+     * @param turn
+     */
     public void drive(double x, double y, double turn) {
         heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
 
         // Corrected field-centric math (if you use IMU)
         double rotatedX = x * Math.cos(-heading) - y * Math.sin(-heading);
@@ -74,7 +79,7 @@ public class DriveSubsystem extends SubsystemBase{
                 Math.max(
                         Math.abs(frontLeftPower),
                         Math.max(Math.abs(frontRightPower),
-                                Math.max(Math.abs(rearLeftPower), Math.abs(rearRightPower)))
+                        Math.max(Math.abs(rearLeftPower), Math.abs(rearRightPower)))
                 )
         );
 
@@ -89,7 +94,6 @@ public class DriveSubsystem extends SubsystemBase{
         rearLeft.setPower(rearLeftPower);
         rearRight.setPower(rearRightPower);
     }
-
 
     public void resetAngle() {
 //        lastAngles = imu.getRobotYawPitchRollAngles().getYaw();

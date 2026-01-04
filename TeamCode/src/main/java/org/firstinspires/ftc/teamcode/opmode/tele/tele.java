@@ -15,12 +15,11 @@ public class tele extends OpMode {
     @Override
     public void init() {
         robot = new Robot(hardwareMap, Alliance.BLUE, gamepad1, telemetry);
-        if(gamepad1.xWasPressed()){
+        if (gamepad1.xWasPressed()){
             robot.alliance = Alliance.BLUE;
-
-        }else if(gamepad1.bWasPressed()){
+        } else if(gamepad1.bWasPressed()){
             robot.alliance = Alliance.RED;
-        }//end of else if\
+        }
         telemetry.addLine("press X to change to BLUE Alliance");
         telemetry.addLine("press B to change to RED Alliance");
         telemetry.addData("current alliance selected:", robot.alliance);
