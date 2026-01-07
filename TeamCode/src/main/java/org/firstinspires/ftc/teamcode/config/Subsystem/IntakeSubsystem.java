@@ -13,7 +13,6 @@ public class IntakeSubsystem extends SubsystemBase{
     public IntakeSubsystem(HardwareMap hw){
         intake = hw.get(DcMotorEx.class, "Intake");
 
-
         // Orientation for intake
         intake.setDirection(DcMotor.Direction.REVERSE);
 

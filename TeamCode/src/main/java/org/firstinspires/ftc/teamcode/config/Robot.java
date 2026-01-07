@@ -142,7 +142,7 @@ public class Robot {
 
         if (state != state.none){
             ElapsedTime timer = new ElapsedTime();
-            error = limeLightSubsystem.getHoriError();
+            error = limeLightSubsystem.getHorizontalError();
             turn = trackTo(error, timer);
         } else {
             turn = -driver.getRightX();

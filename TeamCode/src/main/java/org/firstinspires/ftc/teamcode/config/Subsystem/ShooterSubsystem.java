@@ -61,9 +61,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
 //Adding each val with a key
 
-
-
-
     // set RPM of motorv
     public void setRPM(int RPM) {
         shooter1.setVelocity(RPM * 6, AngleUnit.DEGREES);

@@ -23,4 +23,4 @@ public class TransferSubsystem extends SubsystemBase {
         transfer.setPower(0);
     }
 
-}//end of TransferSubsystem class
+} // end of TransferSubsystem class

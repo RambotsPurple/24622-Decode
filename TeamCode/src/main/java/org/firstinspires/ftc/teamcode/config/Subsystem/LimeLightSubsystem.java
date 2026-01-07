@@ -6,7 +6,6 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 
 import java.util.List;
@@ -14,21 +13,20 @@ import java.util.List;
 public class LimeLightSubsystem extends SubsystemBase {
     private final Limelight3A limelight;
     private Alliance alliance;
-
     private final int id;
-    public  LimeLightSubsystem(HardwareMap hw, Alliance alliance){
+    public  LimeLightSubsystem(HardwareMap hw, Alliance alliance) {
         limelight = hw.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.pipelineSwitch(0);
         this.alliance = alliance;
-        id = this.alliance == Alliance.RED?24:20;
-    }//end of constructor
+        id = this.alliance == Alliance.RED ? 24 : 20;
+    } //end of constructor
 
     public void lStart(){
         limelight.start();
     }//end of lStart
 
-    public double getDist(){
+    public double getDist() {
         FiducialResult tag = null;
         double tagDist = 0;
         List<FiducialResult> results = limelight.getLatestResult().getFiducialResults();
@@ -49,7 +47,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 
     }//end getDist
 
-    public double getHoriError(){
+    public double getHorizontalError(){
         FiducialResult tag = null;
         double tagYaw = 0;
         List<FiducialResult> results = limelight.getLatestResult().getFiducialResults();
@@ -57,7 +55,7 @@ public class LimeLightSubsystem extends SubsystemBase {
         if (results.isEmpty()) return 0;
 
         for (FiducialResult fiducial : results) {
-            if (fiducial!=null &&fiducial.getFiducialId() == id){
+            if (fiducial != null && fiducial.getFiducialId() == id){
                 tag = fiducial;
                 break;
             }//end of if
@@ -69,8 +67,6 @@ public class LimeLightSubsystem extends SubsystemBase {
 
         return tagYaw;
     }//end of getHoriError
-
-
 
 
 }//end of LimeLightSubsystem
