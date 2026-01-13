@@ -26,10 +26,10 @@ public class DriveSubsystem extends SubsystemBase{
      * @param hw Hardwaremap
      */
     public DriveSubsystem (HardwareMap hw) {
-        frontLeft = hw.get(DcMotorEx.class, "leftFront");
-        frontRight = hw.get(DcMotorEx.class, "rightFront");
-        rearLeft = hw.get(DcMotorEx.class, "leftBack");
-        rearRight = hw.get(DcMotorEx.class, "rightBack");
+        frontLeft = hw.get(DcMotorEx.class, "lf");
+        frontRight = hw.get(DcMotorEx.class, "lb");
+        rearLeft = hw.get(DcMotorEx.class, "rf");
+        rearRight = hw.get(DcMotorEx.class, "rb");
 
         imu = hw.get(IMU.class, "imu");
 

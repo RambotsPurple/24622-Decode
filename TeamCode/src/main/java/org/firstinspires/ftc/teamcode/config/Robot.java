@@ -59,9 +59,7 @@ public class Robot {
     /**
      * This constructor below is for a single player auton anywhere
      * of the field
-     *
-     * @author Alex
-     * @param h hardwaremap
+     ** @param h hardwaremap
      * @param alliance blue or red
      * @param driver driver gamepad
      * @param telemetry allows for telemetry output

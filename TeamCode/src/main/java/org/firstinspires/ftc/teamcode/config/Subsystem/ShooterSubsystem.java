@@ -17,23 +17,23 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ShooterSubsystem extends SubsystemBase {
 
     public DcMotorEx shooter1, shooter2;
-    public InterpLUT lutShooter;
-    double f = 0 ;
-    double p = 0;
+    //public InterpLUT lutShooter;
+   public double f = 0 ;
+    public  double p = 0;
 
     public ShooterSubsystem(HardwareMap hw, Telemetry t) {
         //need to go on the field a tune key points top of the key inside paint and from half
-        lutShooter = new InterpLUT();
+        //lutShooter = new InterpLUT();
         // lutShooter.add(1.1, 0.2);
         // lutShooter.add(2.7, .5);
         // lutShooter.add(3.6, 0.75);
         // lutShooter.add(4.1, 0.9);
         // lutShooter.add(5, 1);
 //generating final equation
-        lutShooter.createLUT(); //calc the cubuic
+//        lutShooter.createLUT(); //calc the cubuic
 
-        shooter1 = hw.get(DcMotorEx.class, "lShoot");
-        shooter2 = hw.get(DcMotorEx.class, "rShoot");
+        shooter1 = hw.get(DcMotorEx.class, "s1");
+        shooter2 = hw.get(DcMotorEx.class, "s2");
 
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -80,6 +80,9 @@ public class ShooterSubsystem extends SubsystemBase {
         shooter2.setPower(p);
     }//end of setMotorVel
 
+    public void getCurretnvel(){
+        return shooter1.curr
+    }
 
 
 }// end of shooter class
