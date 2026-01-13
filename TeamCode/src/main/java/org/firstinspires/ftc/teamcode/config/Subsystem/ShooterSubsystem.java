@@ -80,9 +80,6 @@ public class ShooterSubsystem extends SubsystemBase {
         shooter2.setPower(p);
     }//end of setMotorVel
 
-    public void getCurretnvel(){
-        return shooter1.curr
-    }
 
 
 }// end of shooter class
