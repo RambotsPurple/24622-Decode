@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.config.Commands.SetShooterVelocityCommand;
 import org.firstinspires.ftc.teamcode.config.Util.*;
 import org.firstinspires.ftc.teamcode.config.Subsystem.*;
 import org.firstinspires.ftc.teamcode.config.pedroPathing.Constants;
@@ -190,9 +191,29 @@ public class Robot {
      */
     public void tele() {
 
+        // event listeners
+        // all input goes here except for driving which is passed in periodically
+        // --------------------
+
+        /*
+        * right trigger - hold: intake
+        * A - activate shooter
+        * B - deactivate shooter
+         */
+
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
                 .whenActive(new IntakeCommand(intakeSubsystem, 1))
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
+
+        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                new SetShooterVelocityCommand(shooterSubsystem, 1)
+        );
+
+        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                new SetShooterVelocityCommand(shooterSubsystem, 0)
+        );
+
+        // what is ts
         // driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
         //         .toggleWhenActive(state = state.idle, state = state.none);
 

@@ -22,7 +22,7 @@ public class tele extends OpMode {
     public void init_loop() {
         if (gamepad1.xWasPressed()){
             robot.alliance = Alliance.BLUE;
-        } else if (gamepad1.bWasPressed()){
+        } else if (gamepad1.bWasPressed()) {
             robot.alliance = Alliance.RED;
         }
         telemetry.addLine("press X to change to BLUE Alliance");

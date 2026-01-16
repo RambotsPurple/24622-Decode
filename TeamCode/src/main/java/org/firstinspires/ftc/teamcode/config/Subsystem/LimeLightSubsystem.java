@@ -66,7 +66,7 @@ public class LimeLightSubsystem extends SubsystemBase {
         }//end of if
 
         return tagYaw;
-    }//end of getHoriError
+    } //end of getHoriError
 
 
 }//end of LimeLightSubsystem
