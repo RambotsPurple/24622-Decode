@@ -22,15 +22,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public  double p = 0;
 
     public ShooterSubsystem(HardwareMap hw, Telemetry t) {
-        //need to go on the field a tune key points top of the key inside paint and from half
-        //lutShooter = new InterpLUT();
-        // lutShooter.add(1.1, 0.2);
-        // lutShooter.add(2.7, .5);
-        // lutShooter.add(3.6, 0.75);
-        // lutShooter.add(4.1, 0.9);
-        // lutShooter.add(5, 1);
-//generating final equation
-//        lutShooter.createLUT(); //calc the cubuic
 
         shooter1 = hw.get(DcMotorEx.class, "s1");
         shooter2 = hw.get(DcMotorEx.class, "s2");
@@ -62,8 +53,9 @@ public class ShooterSubsystem extends SubsystemBase {
 //Adding each val with a key
 
     // set RPM of motorv
-    public void setRPM(int RPM) {
+    public void setRPM(double RPM) {
         shooter1.setVelocity(RPM * 6, AngleUnit.DEGREES);
+        shooter2.setVelocity(RPM * 6, AngleUnit.DEGREES);
     }
 
     public double getRPM() {
@@ -73,13 +65,5 @@ public class ShooterSubsystem extends SubsystemBase {
     public double getTPS() {
         return shooter1.getVelocity();
     }
-
-
-    public void setMotorVel(double p) {
-        shooter1.setPower(p);
-        shooter2.setPower(p);
-    }//end of setMotorVel
-
-
 
 }// end of shooter class

@@ -5,16 +5,16 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 
 public class SetShooterVelocityCommand extends InstantCommand {
     private final ShooterSubsystem shooter;
-    private double pow;
+    private double rpm;
 
-    public SetShooterVelocityCommand(ShooterSubsystem s, double power) {
+    public SetShooterVelocityCommand(ShooterSubsystem s, double rpm) {
         shooter = s;
-        pow = power;
+        this.rpm = rpm;
         addRequirements(shooter);
     }
 
     @Override
     public void initialize() {
-        shooter.setPower(pow);
+        shooter.setRPM(rpm);
     }
 }

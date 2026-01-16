@@ -210,7 +210,7 @@ public class Robot {
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
 
         driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                new SetShooterVelocityCommand(shooterSubsystem, 1)
+                new SetShooterVelocityCommand(shooterSubsystem, 1000)
         );
 
         driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
@@ -228,8 +228,11 @@ public class Robot {
      */
     public void teleTelemetry() {
         // telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
-        telemetry.addData("input",shooterSubsystem.shooter1.getPower());
-        telemetry.addData("heading",driveSubsystem.getAngle());
+        telemetry.addData("input", shooterSubsystem.shooter1.getPower());
+        telemetry.addData("heading", driveSubsystem.getAngle());
+        telemetry.addData("shooter 1 vel", shooterSubsystem.shooter1.getVelocity());
+        telemetry.addData("shooter 2 vel", shooterSubsystem.shooter2.getVelocity());
+        telemetry.addData("shooter RPM", shooterSubsystem.getRPM());
     } //end of teleTelemetry
 
     /**
