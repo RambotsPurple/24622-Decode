@@ -200,9 +200,9 @@ public class Robot {
         // --------------------
 
         /*
-        * right trigger - hold: intake
-        * A - activate shooter
-        * B - deactivate shooter
+         * right trigger - hold: intake
+         * A - activate shooter
+         * B - deactivate shooter
          */
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
