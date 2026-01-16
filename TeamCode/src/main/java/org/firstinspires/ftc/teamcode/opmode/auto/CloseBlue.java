@@ -1,36 +1,31 @@
  package org.firstinspires.ftc.teamcode.opmode.auto;
 
 
- import com.arcrobotics.ftclib.command.CommandOpMode;
  import com.arcrobotics.ftclib.command.RunCommand;
  import com.arcrobotics.ftclib.command.SequentialCommandGroup;
  import com.arcrobotics.ftclib.command.ParallelCommandGroup;
- import com.arcrobotics.ftclib.command.WaitCommand;
- import com.pedropathing.geometry.Pose;
- import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
  import org.firstinspires.ftc.teamcode.config.Commands.FollowPathCommand;
  import org.firstinspires.ftc.teamcode.config.Robot;
  import org.firstinspires.ftc.teamcode.config.Util.Alliance;
  import org.firstinspires.ftc.teamcode.config.Util.OpModeCommand;
- import org.firstinspires.ftc.teamcode.config.Util.Paths.autoCloseBLue;
-
- import java.nio.file.Path;
+ import org.firstinspires.ftc.teamcode.config.Util.Paths.AutoClose;
 
  @Autonomous(name = "CloseBlue")
  public class CloseBlue extends OpModeCommand {
      Robot robot;
-     Path path;
+     AutoClose path;
      @Override
      public void initialize() {
+         // literally just flip alliance enum for other opMode
          robot = new Robot(hardwareMap, Alliance.BLUE, telemetry);
-
+         path = new AutoClose(robot.getFollower(), robot.alliance);
          schedule(
                      new RunCommand(robot::aPeriodic),
                      new SequentialCommandGroup(
                              new ParallelCommandGroup(
-                                     new FollowPathCommand(robot.getFollower(), robot.getPaths().launch1),
+                                     new FollowPathCommand(robot.getFollower(), path.next())
                              )
 
 
@@ -39,6 +34,4 @@
                      )
          );
      }
-
-
 }

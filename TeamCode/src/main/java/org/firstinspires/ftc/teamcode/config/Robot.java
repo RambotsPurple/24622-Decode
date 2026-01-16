@@ -101,13 +101,13 @@ public class Robot {
      * @param telemetry
      */
 
-    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry){
-        shooterSubsystem = new ShooterSubsystem(h,telemetry);
+    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry) {
+        shooterSubsystem = new ShooterSubsystem(h, telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
-        limeLightSubsystem = new LimeLightSubsystem(h,alliance);
-        hoodSubsystem = new HoodSubsystem(h,telemetry);
-        indexerSubsystem = new IndexerSubsystem(h,telemetry);
+        limeLightSubsystem = new LimeLightSubsystem(h, alliance);
+        hoodSubsystem = new HoodSubsystem(h, telemetry);
+        indexerSubsystem = new IndexerSubsystem(h, telemetry);
 
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
@@ -115,7 +115,7 @@ public class Robot {
         this.alliance = alliance;
         this.telemetry = telemetry;
 
-        //instaniate the lynx mod
+        // instaniate the lynx mod
         allHubs = h.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);

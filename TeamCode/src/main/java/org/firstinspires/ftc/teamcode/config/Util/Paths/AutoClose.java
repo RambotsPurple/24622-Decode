@@ -7,7 +7,7 @@ import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 
-public class autoCloseBLue {
+public class AutoClose {
 
     private final Follower follower;
     private final Alliance alliance;
@@ -32,7 +32,7 @@ public class autoCloseBLue {
 
     /* -------------------- Constructor -------------------- */
 
-    public autoCloseBLue(Follower follower, Alliance alliance) {
+    public AutoClose(Follower follower, Alliance alliance) {
         this.follower = follower;
         this.alliance = alliance;
 
