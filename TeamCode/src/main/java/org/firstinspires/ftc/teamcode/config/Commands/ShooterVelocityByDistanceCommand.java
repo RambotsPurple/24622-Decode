@@ -26,6 +26,6 @@ public class ShooterVelocityByDistanceCommand extends InstantCommand {
 
     @Override
     public void initialize() {
-        shooter.setPower(shooterDistanceVelocityLut.get(currentDistance));
+        shooter.setRPM(shooterDistanceVelocityLut.get(currentDistance));
     }
 }
