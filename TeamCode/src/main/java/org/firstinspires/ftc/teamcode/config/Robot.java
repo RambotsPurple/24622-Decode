@@ -101,7 +101,7 @@ public class Robot {
      * @param telemetry
      */
 
-    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry, PathChain PC){
+    public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry){
         shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
@@ -210,7 +210,7 @@ public class Robot {
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
 
         driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                new SetShooterVelocityCommand(shooterSubsystem, 1000)
+                new SetShooterVelocityCommand(shooterSubsystem, 6000)
         );
 
         driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
