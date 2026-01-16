@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.config.Subsystem;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.arcrobotics.ftclib.util.InterpLUT;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
