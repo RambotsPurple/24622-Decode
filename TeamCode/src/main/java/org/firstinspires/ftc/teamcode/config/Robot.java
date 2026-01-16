@@ -35,6 +35,7 @@ public class Robot {
 
     protected GamepadEx driver;
 
+    // Instantiate subsystems
     public ShooterSubsystem shooterSubsystem;
     public IntakeSubsystem intakeSubsystem;
     public TransferSubsystem transferSubsystem;
@@ -42,6 +43,7 @@ public class Robot {
     public HoodSubsystem hoodSubsystem;
 
     public LimeLightSubsystem limeLightSubsystem;
+    public IndexerSubsystem indexerSubsystem;
     private final Telemetry telemetry;
     public state state;
 
@@ -50,11 +52,11 @@ public class Robot {
     public double lastError = 0 ;
 
     public double kp = 0;
-    public  double kd =0;
+    public double kd =0;
 
     public Follower getFollower(){
         return follower;
-    }
+    } // end of getFollower
 
 
     /**
@@ -71,6 +73,7 @@ public class Robot {
         transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
         hoodSubsystem = new HoodSubsystem(h,telemetry);
+        indexerSubsystem = new IndexerSubsystem(h,telemetry);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -84,7 +87,7 @@ public class Robot {
 
         loop.resetTimer();
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem, indexerSubsystem
         );
 
     } //end of teleop constructor
@@ -104,6 +107,7 @@ public class Robot {
         transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
         hoodSubsystem = new HoodSubsystem(h,telemetry);
+        indexerSubsystem = new IndexerSubsystem(h,telemetry);
 
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
@@ -118,7 +122,7 @@ public class Robot {
         }//end of for
 
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem, indexerSubsystem
         ); // end of cs
 
     }//end of teleop constructor
@@ -133,8 +137,8 @@ public class Robot {
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
-            }
-        }
+            } // end of for
+        } // end of if
 
         // logic for auto tracking
         double turn;
@@ -145,7 +149,7 @@ public class Robot {
             turn = trackTo(error, timer);
         } else {
             turn = -driver.getRightX();
-        }
+        } // end of if..else
 
         //params for drive
         follower.setTeleOpDrive(
@@ -243,8 +247,8 @@ public class Robot {
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
-            }
-        }
+            } // end of for
+        } // end of if
         follower.update();
         cs.run();
     } //end of aPeriodic
