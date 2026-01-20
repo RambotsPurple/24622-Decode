@@ -76,8 +76,8 @@ public class Robot {
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
         indexerSubsystem = new IndexerSubsystem(h,telemetry);
         driveSubsystem  = new DriveSubsystem(h);
-        follower = Constants.createFollower(h);
-        follower.setStartingPose(new Pose(0,0,0));
+        //follower = Constants.createFollower(h);
+        //follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
         this.driver = new GamepadEx(driver);
         this.telemetry = telemetry;
@@ -107,10 +107,10 @@ public class Robot {
         shooterSubsystem = new ShooterSubsystem(h, telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h, alliance);
-        indexerSubsystem = new IndexerSubsystem(h, telemetry);
-
-        follower = Constants.createFollower(h);
-        follower.setStartingPose(new Pose(0,0,0));
+        //indexerSubsystem = new IndexerSubsystem(h, telemetry);
+        //
+        //follower = Constants.createFollower(h);
+        //follower.setStartingPose(new Pose(0,0,0));
         // pc(follower);
         this.alliance = alliance;
         this.telemetry = telemetry;
@@ -132,7 +132,6 @@ public class Robot {
      */
     public void tPeriodic() {
         teleTelemetry();
-        tele();
         //every 5 milliseconds clear the cache
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
@@ -160,7 +159,7 @@ public class Robot {
         //        false
         //);
 
-        follower.update();
+        //follower.update();
         telemetry.update();
         cs.run();
     } //end of periodic
@@ -171,8 +170,8 @@ public class Robot {
     public void tStart() {
         state = state.idle;
         limeLightSubsystem.lStart();
-        follower.update();
-        follower.startTeleopDrive(true);
+        //follower.update();
+        //follower.startTeleopDrive(true);
     } // end of tStart
 
     /**
