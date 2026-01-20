@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.config.Commands.IndexCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.SetShooterVelocityCommand;
 import org.firstinspires.ftc.teamcode.config.Util.*;
@@ -35,15 +36,17 @@ public class Robot {
 
     protected GamepadEx driver;
 
+    public IndexerSubsystem indexerSubsystem;
+
     // Instantiate subsystems
     public ShooterSubsystem shooterSubsystem;
     public IntakeSubsystem intakeSubsystem;
-    public TransferSubsystem transferSubsystem;
+
     public DriveSubsystem driveSubsystem;
-    public HoodSubsystem hoodSubsystem;
+
+
 
     public LimeLightSubsystem limeLightSubsystem;
-    public IndexerSubsystem indexerSubsystem;
     private final Telemetry telemetry;
     public state state;
 
@@ -70,10 +73,9 @@ public class Robot {
     public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Telemetry telemetry) {
         shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
-        transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
-        hoodSubsystem = new HoodSubsystem(h,telemetry);
         indexerSubsystem = new IndexerSubsystem(h,telemetry);
+        driveSubsystem  = new DriveSubsystem(h);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
@@ -87,7 +89,7 @@ public class Robot {
 
         loop.resetTimer();
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem, indexerSubsystem
+                shooterSubsystem, intakeSubsystem,limeLightSubsystem, indexerSubsystem,driveSubsystem
         );
 
     } //end of teleop constructor
@@ -104,9 +106,7 @@ public class Robot {
     public Robot(HardwareMap h, Alliance alliance, Telemetry telemetry) {
         shooterSubsystem = new ShooterSubsystem(h, telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
-        transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h, alliance);
-        hoodSubsystem = new HoodSubsystem(h, telemetry);
         indexerSubsystem = new IndexerSubsystem(h, telemetry);
 
         follower = Constants.createFollower(h);
@@ -122,7 +122,7 @@ public class Robot {
         }//end of for
 
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem, indexerSubsystem
+                shooterSubsystem, intakeSubsystem,limeLightSubsystem, driveSubsystem, indexerSubsystem
         ); // end of cs
 
     }//end of teleop constructor
@@ -132,7 +132,7 @@ public class Robot {
      */
     public void tPeriodic() {
         teleTelemetry();
-
+        tele();
         //every 5 milliseconds clear the cache
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
@@ -151,13 +151,14 @@ public class Robot {
             turn = -driver.getRightX();
         } // end of if..else
 
-        //params for drive
-        follower.setTeleOpDrive(
-                -driver.getLeftX() ,
-                -driver.getLeftY() ,
-                turn,
-                false
-        );
+        driveSubsystem.drive(-driver.getLeftX(),-driver.getLeftY(),turn);
+        ////params for drive
+        //follower.setTeleOpDrive(
+        //        -driver.getLeftX() ,
+        //        -driver.getLeftY() ,
+        //        turn,
+        //        false
+        //);
 
         follower.update();
         telemetry.update();
@@ -216,6 +217,10 @@ public class Robot {
         driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                 new SetShooterVelocityCommand(shooterSubsystem, 0)
         );
+
+        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0)
+                .whenActive(new IndexCommand(indexerSubsystem, 1))
+                .whenInactive(new IndexCommand(indexerSubsystem, 0));
 
         // what is ts
         // driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
