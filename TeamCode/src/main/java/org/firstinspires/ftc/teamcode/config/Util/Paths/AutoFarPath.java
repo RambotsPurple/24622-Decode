@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.config.Commands.Paths;
+package org.firstinspires.ftc.teamcode.config.Util.Paths;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;

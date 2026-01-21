@@ -12,14 +12,10 @@ import java.util.List;
 
 public class LimeLightSubsystem extends SubsystemBase {
     private final Limelight3A limelight;
-    private Alliance alliance;
-    private final int id;
     public  LimeLightSubsystem(HardwareMap hw, Alliance alliance) {
         limelight = hw.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
-        limelight.pipelineSwitch(0);
-        this.alliance = alliance;
-        id = this.alliance == Alliance.RED ? 24 : 20;
+        limelight.pipelineSwitch(alliance == Alliance.BLUE?0:1);
     } //end of constructor
 
     public void lStart(){
@@ -34,7 +30,7 @@ public class LimeLightSubsystem extends SubsystemBase {
         if (results.isEmpty()) return 0;
 
         for (FiducialResult fiducial : results) {
-            if (fiducial!=null &&fiducial.getFiducialId() == id){
+            if (fiducial!=null){
                 tag = fiducial;
                 break;
             }//end of if
@@ -55,7 +51,7 @@ public class LimeLightSubsystem extends SubsystemBase {
         if (results.isEmpty()) return 0;
 
         for (FiducialResult fiducial : results) {
-            if (fiducial != null && fiducial.getFiducialId() == id){
+            if (fiducial != null ){
                 tag = fiducial;
                 break;
             }//end of if

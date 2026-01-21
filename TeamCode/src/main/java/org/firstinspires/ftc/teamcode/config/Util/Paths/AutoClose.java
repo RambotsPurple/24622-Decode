@@ -28,7 +28,7 @@ public class AutoClose {
 
     public Pose resetPose    = new Pose(71.917, 96.111,  Math.toRadians(0));
 
-    private int index = 0;
+    public int index = 0;
 
     /* -------------------- Constructor -------------------- */
 
