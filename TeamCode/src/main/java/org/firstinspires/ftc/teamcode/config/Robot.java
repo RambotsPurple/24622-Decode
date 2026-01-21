@@ -44,6 +44,7 @@ public class Robot {
 
     public DriveSubsystem driveSubsystem;
 
+    public ElapsedTime turnTimer;
 
 
     public LimeLightSubsystem limeLightSubsystem;
@@ -144,14 +145,14 @@ public class Robot {
         double turn;
 
         if (state != state.none){
-            ElapsedTime timer = new ElapsedTime();
             error = limeLightSubsystem.getHorizontalError();
-            turn = trackTo(error, timer);
+            turn = trackTo(error, turnTimer);
         } else {
             turn = -driver.getRightX();
         } // end of if..else
 
         driveSubsystem.drive(-driver.getLeftX(),-driver.getLeftY(),turn);
+
         ////params for drive
         //follower.setTeleOpDrive(
         //        -driver.getLeftX() ,
@@ -169,6 +170,7 @@ public class Robot {
      * Run on start of teleOp
      */
     public void tStart() {
+        turnTimer = new ElapsedTime();
         state = state.idle;
         limeLightSubsystem.lStart();
         follower.update();
@@ -176,15 +178,18 @@ public class Robot {
     } // end of tStart
 
     /**
-     * We use the error from our limelight for our pid and use that to adjust
+     * We use the error from our limelight for our pd and use that to adjust
      * to the april tag accordingly
      * @param error
      * @param time
      * @return pow
      */
     public double trackTo(double error, ElapsedTime time) {
-        double d = (error - lastError) / time.seconds();
-        double pow = (kp*error)+(kd*d);
+        double dt = time.seconds();
+        if (dt == 0) return 0;
+
+        double d = (error - lastError) / dt;
+        double pow = (kp * error) + (kd * d);
 
         lastError = error;
         time.reset();

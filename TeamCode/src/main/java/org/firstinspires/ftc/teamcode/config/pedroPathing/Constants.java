@@ -30,8 +30,6 @@ public class   Constants {
     //.forwardZeroPowerAcceleration(deceleration)
     //@Todo get from LZPA
     //.lateralZeroPowerAcceleration(deceleration)
-
-
     //    @TODO tune
     public static PinpointConstants localizerConstants = new PinpointConstants()
             // manual change the offsets
