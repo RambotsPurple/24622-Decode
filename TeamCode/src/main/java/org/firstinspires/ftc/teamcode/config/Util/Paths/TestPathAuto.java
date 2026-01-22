@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.config.Commands.Paths;
+package org.firstinspires.ftc.teamcode.config.Util.Paths;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-import org.firstinspires.ftc.teamcode.config.Robot;
+
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 
 public class TestPathAuto {

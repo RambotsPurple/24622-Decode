@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  */
 public class DriveSubsystem extends SubsystemBase{
     private DcMotorEx frontLeft, frontRight, rearLeft, rearRight;
-    private IMU imu;
+    public IMU imu;
     private double heading;
     private double lastAngles;
     private double angles;

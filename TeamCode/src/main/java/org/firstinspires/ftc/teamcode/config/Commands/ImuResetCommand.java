@@ -10,7 +10,6 @@ public class ImuResetCommand extends InstantCommand {
     public ImuResetCommand(DriveSubsystem drive){
         d = drive;
         addRequirements(d);
-
     }
     @Override
     public void initialize() {

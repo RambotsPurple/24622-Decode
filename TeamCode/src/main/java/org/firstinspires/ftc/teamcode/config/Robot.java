@@ -2,14 +2,15 @@ package org.firstinspires.ftc.teamcode.config;
 
 import static org.firstinspires.ftc.teamcode.config.pedroPathing.Tuning.follower;
 
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.lynx.LynxModule;
 
@@ -44,6 +45,7 @@ public class Robot {
 
     public DriveSubsystem driveSubsystem;
 
+    public ElapsedTime turnTimer;
 
 
     public LimeLightSubsystem limeLightSubsystem;
@@ -65,7 +67,7 @@ public class Robot {
     /**
      * This constructor below is for a single player auton anywhere
      * of the field
-     ** @param h hardwaremap
+     * @param h hardwaremap
      * @param alliance blue or red
      * @param driver driver gamepad
      * @param telemetry allows for telemetry output
@@ -76,8 +78,8 @@ public class Robot {
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
         indexerSubsystem = new IndexerSubsystem(h,telemetry);
         driveSubsystem  = new DriveSubsystem(h);
-        //follower = Constants.createFollower(h);
-        //follower.setStartingPose(new Pose(0,0,0));
+        // follower = Constants.createFollower(h);
+        // follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
         this.driver = new GamepadEx(driver);
         this.telemetry = telemetry;
@@ -97,7 +99,6 @@ public class Robot {
     /**
      * The constructor below is for auto on any side of the field
      *
-     * @author Alex
      * @param h
      * @param alliance
      * @param telemetry
@@ -107,10 +108,10 @@ public class Robot {
         shooterSubsystem = new ShooterSubsystem(h, telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h, alliance);
-        //indexerSubsystem = new IndexerSubsystem(h, telemetry);
-        //
-        //follower = Constants.createFollower(h);
-        //follower.setStartingPose(new Pose(0,0,0));
+        indexerSubsystem = new IndexerSubsystem(h, telemetry);
+
+        follower = Constants.createFollower(h);
+        follower.setStartingPose(new Pose(0,0,0));
         // pc(follower);
         this.alliance = alliance;
         this.telemetry = telemetry;
@@ -132,6 +133,7 @@ public class Robot {
      */
     public void tPeriodic() {
         teleTelemetry();
+        tele();
         //every 5 milliseconds clear the cache
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
@@ -142,15 +144,15 @@ public class Robot {
         // logic for auto tracking
         double turn;
 
-        if (state != state.none){
-            ElapsedTime timer = new ElapsedTime();
+        if (state == state.Locked){
             error = limeLightSubsystem.getHorizontalError();
-            turn = trackTo(error, timer);
+            turn = trackTo(error, turnTimer);
         } else {
             turn = -driver.getRightX();
         } // end of if..else
 
         driveSubsystem.drive(-driver.getLeftX(),-driver.getLeftY(),turn);
+
         ////params for drive
         //follower.setTeleOpDrive(
         //        -driver.getLeftX() ,
@@ -159,7 +161,7 @@ public class Robot {
         //        false
         //);
 
-        //follower.update();
+        follower.update();
         telemetry.update();
         cs.run();
     } //end of periodic
@@ -168,22 +170,26 @@ public class Robot {
      * Run on start of teleOp
      */
     public void tStart() {
+        turnTimer = new ElapsedTime();
         state = state.idle;
         limeLightSubsystem.lStart();
-        //follower.update();
-        //follower.startTeleopDrive(true);
+        follower.update();
+        follower.startTeleopDrive(true);
     } // end of tStart
 
     /**
-     * We use the error from our limelight for our pid and use that to adjust
+     * We use the error from our limelight for our pd and use that to adjust
      * to the april tag accordingly
      * @param error
      * @param time
      * @return pow
      */
     public double trackTo(double error, ElapsedTime time) {
-        double d = (error - lastError) / time.seconds();
-        double pow = (kp*error)+(kd*d);
+        double dt = time.seconds();
+        if (dt == 0) return 0;
+
+        double d = (error - lastError) / dt;
+        double pow = (kp * error) + (kd * d);
 
         lastError = error;
         time.reset();
@@ -201,6 +207,8 @@ public class Robot {
 
         /*
          * right trigger - hold: intake
+         * right bumper - toggle: indexer
+         * left bumper - toggle: Locked state so LLS take's over turn
          * A - activate shooter
          * B - deactivate shooter
          */
@@ -217,15 +225,22 @@ public class Robot {
                 new SetShooterVelocityCommand(shooterSubsystem, 0)
         );
 
-        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0)
-                .whenActive(new IndexCommand(indexerSubsystem, 1))
-                .whenInactive(new IndexCommand(indexerSubsystem, 0));
+        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).toggleWhenActive(
+                new IndexCommand(indexerSubsystem, 1)
+        );
 
-        // what is ts
-        // driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-        //         .toggleWhenActive(state = state.idle, state = state.none);
+
+        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenActive(
+                setState(state.Locked)
+        );
+
 
     } //end of tele method
+
+    public InstantCommand setState(state s){
+        this.state = s;
+        return null;
+    }
 
     /**
      * Telemetry data for teleOp
@@ -234,6 +249,7 @@ public class Robot {
         // telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
         telemetry.addData("input", shooterSubsystem.shooter1.getPower());
         telemetry.addData("heading", driveSubsystem.getAngle());
+        telemetry.addData("state", state);
         telemetry.addData("shooter 1 vel", shooterSubsystem.shooter1.getVelocity());
         telemetry.addData("shooter 2 vel", shooterSubsystem.shooter2.getVelocity());
         telemetry.addData("shooter RPM", shooterSubsystem.getRPM());
