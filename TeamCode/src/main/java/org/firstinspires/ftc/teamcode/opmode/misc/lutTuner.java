@@ -24,8 +24,12 @@ public class lutTuner extends OpMode {
         ll = new LimeLightSubsystem(hardwareMap,Alliance.RED);
 
 
-    } // init
 
+    } // init
+    @Override
+    public void start(){
+        ll.lStart();
+    }
 
     @Override
     public void loop() {

@@ -78,8 +78,8 @@ public class Robot {
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
         indexerSubsystem = new IndexerSubsystem(h,telemetry);
         driveSubsystem  = new DriveSubsystem(h);
-        // follower = Constants.createFollower(h);
-        // follower.setStartingPose(new Pose(0,0,0));
+        follower = Constants.createFollower(h);
+        follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
         this.driver = new GamepadEx(driver);
         this.telemetry = telemetry;
@@ -112,7 +112,6 @@ public class Robot {
 
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
-        // pc(follower);
         this.alliance = alliance;
         this.telemetry = telemetry;
 
@@ -151,16 +150,15 @@ public class Robot {
             turn = -driver.getRightX();
         } // end of if..else
 
-        driveSubsystem.drive(-driver.getLeftX(),-driver.getLeftY(),turn);
 
         ////params for drive
-        //follower.setTeleOpDrive(
-        //        -driver.getLeftX() ,
-        //        -driver.getLeftY() ,
-        //        turn,
-        //        false
-        //);
-
+        follower.setTeleOpDrive(
+               -driver.getLeftX() ,
+               -driver.getLeftY() ,
+               turn,
+               false
+        );
+        
         follower.update();
         telemetry.update();
         cs.run();

@@ -25,6 +25,7 @@ public class CloseRED extends OpModeCommand {
         // literally just flip alliance enum for other opMode
         robot = new Robot(hardwareMap, Alliance.RED, telemetry);
         path = new AutoClose(robot.getFollower(), robot.alliance);
+        robot.aStart();
         schedule(
                 new RunCommand(robot::aPeriodic),
                 new SequentialCommandGroup(

@@ -10,7 +10,7 @@ public class ShooterConstants {
         // Key = Distance from limeLight, Value = Shooter Velocity
 
         // TODO placeholder values, tune
-        lut.add(0, 1000);
+        // lut.add(0, 1000);
 //        lut.add(1.1, 0.2);
 //        lut.add(2.7, 0.5);
 //        lut.add(3.6, 0.75);
