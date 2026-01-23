@@ -4,6 +4,7 @@
  import com.arcrobotics.ftclib.command.RunCommand;
  import com.arcrobotics.ftclib.command.SequentialCommandGroup;
  import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+ import com.arcrobotics.ftclib.command.WaitCommand;
  import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
  import org.firstinspires.ftc.teamcode.config.Commands.FollowPathCommand;
@@ -25,14 +26,18 @@
          // literally just flip alliance enum for other opMode
          robot = new Robot(hardwareMap, Alliance.BLUE, telemetry);
          path = new AutoClose(robot.getFollower(), robot.alliance);
+         robot.aStart();
+
          schedule(
                      new RunCommand(robot::aPeriodic),
                      new SequentialCommandGroup(
                              new FollowPathCommand(robot.getFollower(), path.next()),
                              new ShooterVelocityByDistanceCommand(robot.shooterSubsystem,robot.limeLightSubsystem),
                              new IndexCommand(robot.indexerSubsystem, 1),
+                             new WaitCommand(1000),
                              new FollowPathCommand(robot.getFollower(), path.next()),
                              new IndexCommand(robot.indexerSubsystem, 0),
+                             new WaitCommand(500),
                              new ParallelCommandGroup(
                                      new IntakeCommand(robot.intakeSubsystem, 1),
                                      new FollowPathCommand(robot.getFollower(), path.next())
