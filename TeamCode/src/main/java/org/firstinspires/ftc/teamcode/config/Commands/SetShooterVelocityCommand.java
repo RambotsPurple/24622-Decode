@@ -15,7 +15,7 @@ public class SetShooterVelocityCommand extends InstantCommand  {
 
     @Override
     public void initialize() {
-        shooter.setPower(rpm);
+        shooter.setRPM(rpm);
     }
 
 

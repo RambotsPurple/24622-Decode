@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.config.Robot;
 import org.firstinspires.ftc.teamcode.config.Subsystem.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
@@ -28,15 +29,9 @@ public class shootertuner extends OpMode {
         shooter1 = hardwareMap.get(DcMotorEx.class, "s1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "s2");
 
-        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //issue with shooter2 when encoder cable not connect
-
         // Orientation for shooter
-        shooter1.setDirection(DcMotor.Direction.FORWARD);
-        shooter2.setDirection(DcMotor.Direction.FORWARD);
+        shooter1.setDirection(DcMotor.Direction.REVERSE);
+        shooter2.setDirection(DcMotor.Direction.REVERSE);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(p,0,0,f);
         shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
@@ -79,11 +74,11 @@ public class shootertuner extends OpMode {
         shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
-        shooter1.setVelocity(currvelt);
-        shooter2.setVelocity(currvelt);
+        shooter1.setVelocity(currvelt*6, AngleUnit.DEGREES);
+        shooter2.setVelocity(currvelt*6, AngleUnit.DEGREES);
 
         double currvel =  shooter2.getVelocity();
-        double error  = currvelt - currvel;
+        double error  = currvel-currvelt;
         telemetry.addData("targ vel:",currvelt);
         telemetry.addData("curr vel","%.2f", currvel);
         telemetry.addData("error", error);

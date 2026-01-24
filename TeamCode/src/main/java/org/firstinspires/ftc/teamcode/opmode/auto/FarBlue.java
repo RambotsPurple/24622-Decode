@@ -15,20 +15,20 @@ import org.firstinspires.ftc.teamcode.config.Robot;
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 import org.firstinspires.ftc.teamcode.config.Util.OpModeCommand;
 import org.firstinspires.ftc.teamcode.config.Util.Paths.AutoClose;
+import org.firstinspires.ftc.teamcode.config.Util.Paths.AutoFarPath;
 
-@Autonomous(name = "CloseRED")
-public class CloseRED extends OpModeCommand {
+@Autonomous(name = "FarBlue")
+public class FarBlue extends OpModeCommand {
     Robot robot;
-    AutoClose path;
+    AutoFarPath path;
     @Override
     public void initialize() {
         // literally just flip alliance enum for other opMode
-        reset();
         robot = new Robot(hardwareMap, Alliance.RED, telemetry);
-        path = new AutoClose(robot.getFollower(), robot.alliance);
+        path = new AutoFarPath(robot.getFollower(), robot.alliance);
         robot.aStart(path.start);
         schedule(
-                // new RunCommand(robot::aPeriodic),
+                new RunCommand(robot::aPeriodic),
                 new SequentialCommandGroup(
                         new FollowPathCommand(robot.getFollower(), path.next()),
                         new ShooterVelocityByDistanceCommand(robot.shooterSubsystem,robot.limeLightSubsystem),
@@ -40,19 +40,12 @@ public class CloseRED extends OpModeCommand {
                                 new FollowPathCommand(robot.getFollower(), path.next())
                         ),
                         new FollowPathCommand(robot.getFollower(), path.next()),
-
                         new FollowPathCommand(robot.getFollower(), path.next()),
-
                         new FollowPathCommand(robot.getFollower(), path.next()),
-
                         new FollowPathCommand(robot.getFollower(), path.next()),
-
                         new FollowPathCommand(robot.getFollower(), path.next()),
-
                         new FollowPathCommand(robot.getFollower(), path.next()),
-
                         new FollowPathCommand(robot.getFollower(), path.next())
-
 
 
 

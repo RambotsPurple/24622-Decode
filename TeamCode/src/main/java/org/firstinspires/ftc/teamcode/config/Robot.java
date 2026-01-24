@@ -81,7 +81,6 @@ public class Robot {
         indexerSubsystem = new IndexerSubsystem(h,telemetry);
         driveSubsystem  = new DriveSubsystem(h);
         follower = Constants.createFollower(h);
-        follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
         this.driver = new GamepadEx(driver);
         this.telemetry = telemetry;
@@ -120,7 +119,7 @@ public class Robot {
         // instaniate the lynx mod
         allHubs = h.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }//end of for
 
         cs.registerSubsystem(
@@ -184,7 +183,7 @@ public class Robot {
      * @param time
      * @return pow
      */
-    double kp = 0.02;
+    double kp = 0.05;
     double kd = 0.003;
 
     public double trackTo(double error) {
@@ -224,7 +223,7 @@ public class Robot {
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
 
         driver.getGamepadButton(GamepadKeys.Button.A).whenActive(
-                new SetShooterVelocityCommand(shooterSubsystem, 1)
+                new SetShooterVelocityCommand(shooterSubsystem, 5600)
         );
 
         driver.getGamepadButton(GamepadKeys.Button.B).whenActive(
@@ -266,11 +265,10 @@ public class Robot {
         // telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
         telemetry.addData("horizontal",limeLightSubsystem.getHorizontalError());
         telemetry.addData("dist",limeLightSubsystem.getDist());
-
         telemetry.addData("input", shooterSubsystem.shooter1.getPower());
         telemetry.addData("heading", driveSubsystem.getAngle());
         telemetry.addData("state", state);
-        telemetry.addData("shooter 1 vel", shooterSubsystem.shooter1.getVelocity());
+        telemetry.addData("shooter 1 vel with ticks", shooterSubsystem.shooter1.getVelocity());
         telemetry.addData("shooter 2 vel", shooterSubsystem.shooter2.getVelocity());
         telemetry.addData("shooter RPM", shooterSubsystem.getRPM());
     } //end of teleTelemetry
@@ -287,20 +285,13 @@ public class Robot {
      */
     public void aPeriodic(){
         autoTelemetry();
-        if (loop.getElapsedTime() % 5 == 0) {
-            for (LynxModule hub : allHubs) {
-                hub.clearBulkCache();
-            } // end of for
-        } // end of if
-        follower.update();
-        cs.run();
     } //end of aPeriodic
 
     /**
      * Runs on the start of autoOp
      */
-    public void aStart(){
+    public void aStart(Pose p){
         state = state.Manual;
-        limeLightSubsystem.lStart();
+        follower.setStartingPose(p);
     } //end of aStart
 } //end of Robot

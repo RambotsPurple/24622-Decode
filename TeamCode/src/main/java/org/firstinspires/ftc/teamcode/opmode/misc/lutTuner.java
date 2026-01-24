@@ -50,6 +50,7 @@ public class lutTuner extends OpMode {
 
         telemetry.addData("rpm:", sb.getRPM());
         telemetry.addData("distance from tag:", ll.getDist());
+        telemetry.addData("offset:",ll.getHorizontalError()) ;
         telemetry.update();
     }
 }
