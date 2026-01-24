@@ -29,7 +29,7 @@ public class   Constants {
     .forwardZeroPowerAcceleration(-41.08996471425825)
     //@Todo get from LZPA
     .lateralZeroPowerAcceleration(-81.5064706014293)
-    .translationalPIDFCoefficients(new PIDFCoefficients(0.01, 0, 0.01, 0.025))
+    .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.01, 0.025))
     .headingPIDFCoefficients(new PIDFCoefficients(0.95, 0, 0.01, 0.05))
     .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.0,0.0,0.0,0.5,0.3))
     .centripetalScaling(0.00009);

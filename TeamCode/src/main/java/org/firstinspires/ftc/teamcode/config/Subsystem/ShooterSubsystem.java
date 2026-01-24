@@ -18,27 +18,27 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public DcMotorEx shooter1, shooter2;
     //public InterpLUT lutShooter;
-   public double f = 0 ;
-    public  double p = 0;
+   //public double f = 4 ;
+   // public  double p = 1;
 
     public ShooterSubsystem(HardwareMap hw, Telemetry t) {
 
         shooter1 = hw.get(DcMotorEx.class, "s1");
         shooter2 = hw.get(DcMotorEx.class, "s2");
 
-        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //
+        //
+        //shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //issue with shooter2 when encoder cable not connected
-        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         // Orientation for shooter
         shooter1.setDirection(DcMotor.Direction.REVERSE);
-        shooter2.setDirection(DcMotor.Direction.FORWARD);
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(p,0,0,f);
-        shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-        shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        shooter2.setDirection(DcMotor.Direction.REVERSE);
+        //PIDFCoefficients pidfCoefficients = new PIDFCoefficients(p,0,0,f);
+        //shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        //shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
 
     } // init

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 @TeleOp(name = "shooterTuner")
 public class shootertuner extends OpMode {
     public DcMotorEx shooter1, shooter2;
-    double highvel = 6000;
+    double highvel = 5000;
     double lowvel = 1300;
     double currvelt = highvel;
     double p = 0;
@@ -31,8 +32,7 @@ public class shootertuner extends OpMode {
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //issue with shooter2 when encoder cable not connected
-        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //issue with shooter2 when encoder cable not connect
 
         // Orientation for shooter
         shooter1.setDirection(DcMotor.Direction.FORWARD);
@@ -82,7 +82,7 @@ public class shootertuner extends OpMode {
         shooter1.setVelocity(currvelt);
         shooter2.setVelocity(currvelt);
 
-        double currvel =  shooter1.getVelocity();
+        double currvel =  shooter2.getVelocity();
         double error  = currvelt - currvel;
         telemetry.addData("targ vel:",currvelt);
         telemetry.addData("curr vel","%.2f", currvel);

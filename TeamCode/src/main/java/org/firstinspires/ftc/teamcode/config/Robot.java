@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.config.pedroPathing.Tuning.follower
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -45,19 +46,20 @@ public class Robot {
 
     public DriveSubsystem driveSubsystem;
 
-    public ElapsedTime turnTimer;
+    //public ElapsedTime turnTimer;
 
 
     public LimeLightSubsystem limeLightSubsystem;
     private final Telemetry telemetry;
     public state state;
 
+    public double lastTime = 0;
+
     //for pd control for auto alignment
     public double error = 0 ;
     public double lastError = 0 ;
 
-    public double kp = 0;
-    public double kd =0;
+
 
     public Follower getFollower(){
         return follower;
@@ -132,7 +134,7 @@ public class Robot {
      */
     public void tPeriodic() {
         teleTelemetry();
-        tele();
+
         //every 5 milliseconds clear the cache
         if (loop.getElapsedTime() % 5 == 0) {
             for (LynxModule hub : allHubs) {
@@ -145,17 +147,17 @@ public class Robot {
 
         if (state == state.Locked){
             error = limeLightSubsystem.getHorizontalError();
-            turn = trackTo(error, turnTimer);
+            turn = trackTo(error);
         } else {
             turn = -driver.getRightX();
         } // end of if..else
-
+        telemetry.addData("turnh",turn);
 
         ////params for drive
         follower.setTeleOpDrive(
                driver.getLeftY() ,
                -driver.getLeftX() ,
-                -driver.getRightX(),
+                turn,
                false
         );
         
@@ -168,8 +170,8 @@ public class Robot {
      * Run on start of teleOp
      */
     public void tStart() {
-        turnTimer = new ElapsedTime();
-        state = state.idle;
+        //turnTimer = new ElapsedTime();
+        state = state.Manual;
         limeLightSubsystem.lStart();
         follower.update();
         follower.startTeleopDrive(true);
@@ -182,17 +184,23 @@ public class Robot {
      * @param time
      * @return pow
      */
-    public double trackTo(double error, ElapsedTime time) {
-        double dt = time.seconds();
-        if (dt == 0) return 0;
+    double kp = 0.02;
+    double kd = 0.003;
 
-        double d = (error - lastError) / dt;
-        double pow = (kp * error) + (kd * d);
+    public double trackTo(double error) {
+        double now = System.nanoTime() / 1e9;
+        double dt = now - lastTime;
+        if (dt <= 0) return 0;
+
+        double derivative = (error - lastError) / dt;
+        double output = kp * error + kd * derivative;
 
         lastError = error;
-        time.reset();
-        return pow;
-    } // end of trackTo
+        lastTime = now;
+
+        return output;
+    }
+
 
     /**
      * Sets up listeners at the start of teleOp
@@ -215,29 +223,40 @@ public class Robot {
                 .whenActive(new IntakeCommand(intakeSubsystem, 1))
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
 
-        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                new SetShooterVelocityCommand(shooterSubsystem, 6000)
+        driver.getGamepadButton(GamepadKeys.Button.A).whenActive(
+                new SetShooterVelocityCommand(shooterSubsystem, 1)
         );
 
-        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.B).whenActive(
                 new SetShooterVelocityCommand(shooterSubsystem, 0)
         );
 
         driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).toggleWhenActive(
-                new IndexCommand(indexerSubsystem, 1)
+                new IndexCommand(indexerSubsystem, 1),
+                new IndexCommand(indexerSubsystem, 0)
         );
+
+        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0)
+                .whenActive( new ParallelCommandGroup(
+                        new IntakeCommand(intakeSubsystem, -.4),new IndexCommand(indexerSubsystem,-.4)))
+                .whenInactive( new ParallelCommandGroup(
+                        new IntakeCommand(intakeSubsystem, 0),new IndexCommand(indexerSubsystem,0)));
 
 
         driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenActive(
-                setState(state.Locked)
+               new InstantCommand(()-> setState(state.Locked)),
+                new InstantCommand(()-> setState(state.Manual))
         );
 
 
     } //end of tele method
 
-    public InstantCommand setState(state s){
+    public void setState(state s){
         this.state = s;
-        return null;
+        //if (s == state.Locked) {
+        //    turnTimer.reset();
+        //    lastError = 0;
+        //}
     }
 
     /**
@@ -245,6 +264,9 @@ public class Robot {
      */
     public void teleTelemetry() {
         // telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
+        telemetry.addData("horizontal",limeLightSubsystem.getHorizontalError());
+        telemetry.addData("dist",limeLightSubsystem.getDist());
+
         telemetry.addData("input", shooterSubsystem.shooter1.getPower());
         telemetry.addData("heading", driveSubsystem.getAngle());
         telemetry.addData("state", state);
@@ -278,7 +300,7 @@ public class Robot {
      * Runs on the start of autoOp
      */
     public void aStart(){
-        state = state.idle;
+        state = state.Manual;
         limeLightSubsystem.lStart();
     } //end of aStart
 } //end of Robot

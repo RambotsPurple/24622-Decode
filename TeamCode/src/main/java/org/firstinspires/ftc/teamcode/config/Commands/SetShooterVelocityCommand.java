@@ -3,7 +3,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.config.Subsystem.ShooterSubsystem;
 import com.arcrobotics.ftclib.command.InstantCommand;
 
-public class SetShooterVelocityCommand extends InstantCommand {
+public class SetShooterVelocityCommand extends InstantCommand  {
     private final ShooterSubsystem shooter;
     private double rpm;
 
@@ -15,6 +15,8 @@ public class SetShooterVelocityCommand extends InstantCommand {
 
     @Override
     public void initialize() {
-        shooter.setRPM(rpm);
+        shooter.setPower(rpm);
     }
+
+
 }
