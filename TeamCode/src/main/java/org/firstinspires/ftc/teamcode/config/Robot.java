@@ -153,9 +153,9 @@ public class Robot {
 
         ////params for drive
         follower.setTeleOpDrive(
+               driver.getLeftY() ,
                -driver.getLeftX() ,
-               -driver.getLeftY() ,
-               turn,
+                -driver.getRightX(),
                false
         );
         
