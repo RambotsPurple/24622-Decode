@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ShooterSubsystem extends SubsystemBase {
 
+    public double target = 0;
     public DcMotorEx shooter1, shooter2;
     //public InterpLUT lutShooter;
 
@@ -54,7 +55,9 @@ public class ShooterSubsystem extends SubsystemBase {
         shooter1.setPower(p);
         shooter2.setPower(p);
     } // shoot
-
+    public double getTarget(){
+        return target;
+    }
     //Init the Look up table
 
 //Adding each val with a key

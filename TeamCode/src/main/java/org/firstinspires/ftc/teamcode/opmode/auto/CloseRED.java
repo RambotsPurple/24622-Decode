@@ -59,7 +59,6 @@ public class CloseRED extends OpModeCommand {
 
 
 
-//                           new FollowPathCommand(robot.getFollower()path.next())
                 )
         );
     }

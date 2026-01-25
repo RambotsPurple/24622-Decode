@@ -15,6 +15,7 @@ public class IndexerSubsystem extends SubsystemBase {
     public IndexerSubsystem(HardwareMap hw, Telemetry t) {
         index = hw.get(CRServo.class, "index");
         index.setDirection(DcMotorSimple.Direction.FORWARD);
+
     } // init
 
     public void setPower(double p) {

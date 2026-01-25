@@ -30,8 +30,8 @@ public class shootertuner extends OpMode {
         shooter2 = hardwareMap.get(DcMotorEx.class, "s2");
 
         // Orientation for shooter
-        shooter1.setDirection(DcMotor.Direction.REVERSE);
-        shooter2.setDirection(DcMotor.Direction.REVERSE);
+        shooter1.setDirection(DcMotor.Direction.FORWARD);
+        shooter2.setDirection(DcMotor.Direction.FORWARD);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(p,0,0,f);
         shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);

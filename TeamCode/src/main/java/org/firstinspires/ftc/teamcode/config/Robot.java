@@ -37,6 +37,7 @@ public class Robot {
     public CommandScheduler cs = CommandScheduler.getInstance();
 
     protected GamepadEx driver;
+    protected GamepadEx oper;
 
     public IndexerSubsystem indexerSubsystem;
 
@@ -74,7 +75,7 @@ public class Robot {
      * @param driver driver gamepad
      * @param telemetry allows for telemetry output
      **/
-    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Telemetry telemetry) {
+    public Robot(HardwareMap h, Alliance alliance, Gamepad driver,Gamepad oper, Telemetry telemetry) {
         shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
@@ -83,6 +84,7 @@ public class Robot {
         follower = Constants.createFollower(h);
         this.alliance = alliance;
         this.driver = new GamepadEx(driver);
+        this.oper = new GamepadEx(oper);
         this.telemetry = telemetry;
 
         allHubs = h.getAll(LynxModule.class);
@@ -92,7 +94,7 @@ public class Robot {
 
         loop.resetTimer();
         cs.registerSubsystem(
-                shooterSubsystem, intakeSubsystem,limeLightSubsystem, indexerSubsystem,driveSubsystem
+                shooterSubsystem, intakeSubsystem,limeLightSubsystem, indexerSubsystem
         );
 
     } //end of teleop constructor
@@ -123,7 +125,7 @@ public class Robot {
         }//end of for
 
         cs.registerSubsystem(
-                shooterSubsystem, intakeSubsystem,limeLightSubsystem, driveSubsystem, indexerSubsystem
+                shooterSubsystem, intakeSubsystem,limeLightSubsystem, indexerSubsystem
         ); // end of cs
 
     }//end of teleop constructor
@@ -164,6 +166,12 @@ public class Robot {
         telemetry.update();
         cs.run();
     } //end of periodic
+    public void aPeriodic(){
+        autoTelemetry();
+        //follower.update();
+        //
+        //cs.run();
+    } //end of aPeriodic
 
     /**
      * Run on start of teleOp
@@ -183,8 +191,8 @@ public class Robot {
      * @param time
      * @return pow
      */
-    double kp = 0.05;
-    double kd = 0.003;
+    double kp = 0.1;
+    double kd = 0.01;
 
     public double trackTo(double error) {
         double now = System.nanoTime() / 1e9;
@@ -197,7 +205,7 @@ public class Robot {
         lastError = error;
         lastTime = now;
 
-        return output;
+        return Math.signum(output);
     }
 
 
@@ -218,24 +226,30 @@ public class Robot {
          * B - deactivate shooter
          */
 
-        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
+        new Trigger(() -> oper.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
                 .whenActive(new IntakeCommand(intakeSubsystem, 1))
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
 
-        driver.getGamepadButton(GamepadKeys.Button.A).whenActive(
-                new SetShooterVelocityCommand(shooterSubsystem, 5600)
-        );
-
-        driver.getGamepadButton(GamepadKeys.Button.B).whenActive(
+        oper.getGamepadButton(GamepadKeys.Button.A).toggleWhenActive(
+                new SetShooterVelocityCommand(shooterSubsystem, 5600),
                 new SetShooterVelocityCommand(shooterSubsystem, 0)
         );
 
-        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).toggleWhenActive(
+        oper.getGamepadButton(GamepadKeys.Button.X).toggleWhenActive(
+                new SetShooterVelocityCommand(shooterSubsystem, 2800),
+                new SetShooterVelocityCommand(shooterSubsystem, 0)
+        );
+
+
+
+
+
+        oper.getGamepadButton(GamepadKeys.Button.B).toggleWhenActive(
                 new IndexCommand(indexerSubsystem, 1),
                 new IndexCommand(indexerSubsystem, 0)
         );
 
-        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0)
+        new Trigger(() -> oper.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0)
                 .whenActive( new ParallelCommandGroup(
                         new IntakeCommand(intakeSubsystem, -.4),new IndexCommand(indexerSubsystem,-.4)))
                 .whenInactive( new ParallelCommandGroup(
@@ -245,6 +259,10 @@ public class Robot {
         driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenActive(
                new InstantCommand(()-> setState(state.Locked)),
                 new InstantCommand(()-> setState(state.Manual))
+        );
+
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenActive(
+                new InstantCommand(()-> follower.setPose(follower.getPose().withHeading(0)))
         );
 
 
@@ -265,8 +283,8 @@ public class Robot {
         // telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
         telemetry.addData("horizontal",limeLightSubsystem.getHorizontalError());
         telemetry.addData("dist",limeLightSubsystem.getDist());
-        telemetry.addData("input", shooterSubsystem.shooter1.getPower());
-        telemetry.addData("heading", driveSubsystem.getAngle());
+        //telemetry.addData("input", shooterSubsystem.shooter1.getPower());
+        telemetry.addData("heading-w-follower", follower.getPose().getHeading());
         telemetry.addData("state", state);
         telemetry.addData("shooter 1 vel with ticks", shooterSubsystem.shooter1.getVelocity());
         telemetry.addData("shooter 2 vel", shooterSubsystem.shooter2.getVelocity());
@@ -277,15 +295,13 @@ public class Robot {
      * Telemetry data for autoOp
      */
     public void autoTelemetry() {
-
+        //telemetry.addData("loopcycle",);
     } //end of autoTelemetry
 
     /**
      * loops periodically during autoOp
      */
-    public void aPeriodic(){
-        autoTelemetry();
-    } //end of aPeriodic
+
 
     /**
      * Runs on the start of autoOp

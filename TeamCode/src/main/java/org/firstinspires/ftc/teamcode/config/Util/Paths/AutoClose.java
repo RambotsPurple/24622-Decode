@@ -127,7 +127,8 @@ public class AutoClose {
     /* -------------------- Sequencer -------------------- */
 
     public PathChain next() {
-        switch (index++) {
+        index+=1;
+        switch (index) {
             case 0: return launch1();
             case 1: return lineUp1();
             case 2: return intake1();
