@@ -21,50 +21,27 @@ import org.firstinspires.ftc.teamcode.config.Util.OpModeCommand;
 import org.firstinspires.ftc.teamcode.config.Util.Paths.AutoClose;
 import org.firstinspires.ftc.teamcode.config.Util.Paths.AutoFarPath;
 
-@Autonomous(name = "FarBlue")
-public class FarBlue extends OpModeCommand {
+@Autonomous(name = "test")
+public class strafe extends OpModeCommand {
     Robot robot;
     AutoFarPath path;
     @Override
     public void initialize() {
         // literally just flip alliance enum for other opMode
-        robot = new Robot(hardwareMap, Alliance.RED, telemetry);
+        robot = new Robot(hardwareMap, Alliance.BLUE, telemetry);
         path = new AutoFarPath(robot.getFollower(), robot.alliance);
         robot.aStart(path.startPose());
         schedule(
                 new RunCommand(robot::aPeriodic),
                 new SequentialCommandGroup(
-                        //preload
-                        new ParallelCommandGroup(
-                                new FollowPathCommand(robot.getFollower(), path.next()),
-                               new FireCommandGroup(robot.shooterSubsystem,robot.indexerSubsystem,robot.intakeSubsystem)
-                        ),
-                        //spike1
                         new FollowPathCommand(robot.getFollower(), path.next()),
-                        new ParallelCommandGroup(
-                                new IntakeCommand(robot.intakeSubsystem, 1),
-                                new FollowPathCommand(robot.getFollower(), path.next())
-                        ),
-                        new IntakeCommand(robot.intakeSubsystem,0),
-                        //shoot2
                         new FollowPathCommand(robot.getFollower(), path.next()),
-                        new FireCommandGroup(robot.shooterSubsystem,robot.indexerSubsystem,robot.intakeSubsystem),
-                        //spike2
                         new FollowPathCommand(robot.getFollower(), path.next()),
-                        new ParallelCommandGroup(
-                                new IntakeCommand(robot.intakeSubsystem, 1),
-                                new FollowPathCommand(robot.getFollower(), path.next())
-                        ),
-                        new IntakeCommand(robot.intakeSubsystem,0),
                         new FollowPathCommand(robot.getFollower(), path.next()),
-                        new FireCommandGroup(robot.shooterSubsystem,robot.indexerSubsystem,robot.intakeSubsystem),
-
+                        new FollowPathCommand(robot.getFollower(), path.next()),
+                        new FollowPathCommand(robot.getFollower(), path.next()),
                         new FollowPathCommand(robot.getFollower(), path.next()),
                         new FollowPathCommand(robot.getFollower(), path.next())
-
-
-
-
 
 
 

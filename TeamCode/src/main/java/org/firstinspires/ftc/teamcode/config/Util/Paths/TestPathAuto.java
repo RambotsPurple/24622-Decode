@@ -8,110 +8,127 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 
 public class TestPathAuto {
+
     private final Follower follower;
+    private int index = 0;
 
-    // robot lined up to the side of the mat
-    public static Pose start = new Pose(56, 8, Math.toRadians(90));
-    public static Pose linePickUp1 = new Pose(45, 36, Math.toRadians(0));
-    public static Pose pickUp1 = new Pose(12, 36, Math.toRadians(0));
-    public static Pose farScore = new Pose(60, 20, Math.toRadians(115));
+    /* -------------------- Poses -------------------- */
 
-    public static Pose driveOutOfBox = new Pose(56, 30, Math.toRadians(90));
+    public Pose startPose      = new Pose(56.000, 8.000, Math.toRadians(90));
+    public Pose scorePose      = new Pose(56.000, 8.000, Math.toRadians(115));
 
-    public static Pose linePickUp2 = new Pose(45, 63, Math.toRadians(0));
-    public static Pose pickUp2 = new Pose(12, 56, Math.toRadians(0));
-    public static  Pose shortScore = new Pose(56, 80, Math.toRadians(130));
-    public static Pose linePickUp3 = new Pose(45, 84, Math.toRadians(0));
-    public static Pose pickUp3 = new Pose(18, 84, Math.toRadians(0));
+    public Pose lineup1        = new Pose(40.126, 35.272, Math.toRadians(180));
+    public Pose intake1        = new Pose(18.712, 35.306, Math.toRadians(180));
 
+    public Pose lineup3        = new Pose(41.238, 60.391, Math.toRadians(180));
+    public Pose intake3        = new Pose(21.906, 60.040, Math.toRadians(180));
 
+    public Pose observation    = new Pose(11.452, 8.283, Math.toRadians(180));
+    public Pose exit           = new Pose(56.321, 23.470, Math.toRadians(180));
 
+    /* -------------------- Constructor -------------------- */
+
+    public Pose startPose(){
+        return startPose;
+    }
     public TestPathAuto(Follower follower, Alliance alliance) {
         this.follower = follower;
 
         if (alliance == Alliance.RED) {
-            start = start.mirror();
-            linePickUp1 = linePickUp1.mirror();
-            pickUp1 = pickUp1.mirror();
-            linePickUp2 = linePickUp2.mirror();
-            pickUp2 = pickUp2.mirror();
-            linePickUp3 = linePickUp3.mirror();
-            pickUp3 = pickUp3.mirror();
-            farScore = farScore.mirror();
-            shortScore = shortScore.mirror();
+            startPose   = startPose.mirror();
+            scorePose   = scorePose.mirror();
+            lineup1     = lineup1.mirror();
+            intake1     = intake1.mirror();
+            lineup3     = lineup3.mirror();
+            intake3     = intake3.mirror();
+            observation = observation.mirror();
+            exit        = exit.mirror();
         }
     }
 
-    public PathChain shootPreload() {
+    /* -------------------- PathChains -------------------- */
+
+    public PathChain start() {
         return follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                start,
-                                farScore
-                        )
+                .addPath(new BezierLine(startPose, scorePose))
+                .setLinearHeadingInterpolation(
+                        startPose.getHeading(),
+                        scorePose.getHeading()
                 )
-                .setLinearHeadingInterpolation(start.getHeading(), farScore.getHeading())
                 .build();
     }
 
-    public PathChain pickUp1() {
+    public PathChain lineup1() {
         return follower.pathBuilder()
-                .addPath(new BezierLine(farScore, linePickUp1))
-                .addPath(new BezierLine(linePickUp1, pickUp1))
-                .setConstantHeadingInterpolation(pickUp1.getHeading())
-                .build();
-    }
-
-    public PathChain score1() {
-        return follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                pickUp1,
-                                farScore
-                        )
+                .addPath(new BezierLine(scorePose, lineup1))
+                .setLinearHeadingInterpolation(
+                        scorePose.getHeading(),
+                        lineup1.getHeading()
                 )
-                .setLinearHeadingInterpolation(pickUp1.getHeading(), farScore.getHeading())
                 .build();
     }
 
-    public PathChain pickUp2() {
+    public PathChain intake1() {
         return follower.pathBuilder()
-                .addPath(new BezierLine(farScore, linePickUp2))
-                .addPath(new BezierLine(linePickUp2, pickUp2))
-                .setConstantHeadingInterpolation(pickUp2.getHeading())
+                .addPath(new BezierLine(lineup1, intake1))
+                .setTangentHeadingInterpolation()
                 .build();
     }
 
-    public PathChain score2() {
+    public PathChain returnFromIntake1() {
         return follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                pickUp2,
-                                shortScore
-                        )
+                .addPath(new BezierLine(intake1, scorePose))
+                .setLinearHeadingInterpolation(
+                        intake1.getHeading(),
+                        scorePose.getHeading()
                 )
-                .setLinearHeadingInterpolation(pickUp2.getHeading(), shortScore.getHeading())
                 .build();
     }
 
-    public PathChain pickUp3() {
+    public PathChain lineup3() {
         return follower.pathBuilder()
-                .addPath(new BezierLine(shortScore, linePickUp3))
-                .addPath(new BezierLine(linePickUp3, pickUp3))
-                .setConstantHeadingInterpolation(pickUp3.getHeading())
-                .build();
-    }
-
-    public PathChain score3() {
-        return follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                pickUp3,
-                                shortScore
-                        )
+                .addPath(new BezierLine(scorePose, lineup3))
+                .setLinearHeadingInterpolation(
+                        scorePose.getHeading(),
+                        lineup3.getHeading()
                 )
-                .setLinearHeadingInterpolation(pickUp3.getHeading(), shortScore.getHeading())
                 .build();
     }
 
+    public PathChain intake3() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(lineup3, intake3))
+                .setTangentHeadingInterpolation()
+                .build();
+    }
+
+    public PathChain observation() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, observation))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+    }
+
+    public PathChain exit() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, exit))
+                .setTangentHeadingInterpolation()
+                .build();
+    }
+
+    /* -------------------- Sequencer -------------------- */
+
+    public PathChain next() {
+        switch (index++) {
+            case 0: return start();
+            case 1: return lineup1();
+            case 2: return intake1();
+            case 3: return returnFromIntake1();
+            case 4: return lineup3();
+            case 5: return intake3();
+            case 6: return observation();
+            case 7: return exit();
+            default: return null;
+        }
+    }
 }

@@ -8,126 +8,126 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.config.Util.Alliance;
 
 public class AutoFarPath {
+
     private final Follower follower;
-
-    // robot lined up to the edge of the mat
-    public Pose start = new Pose(57, 9, Math.toRadians(90));
-
-    public Pose lineUpPickUpPreload = new Pose(13, 20, Math.toRadians(15));
-    public Pose pickUpPreloadAngled = new Pose(12.5, 12.5, Math.toRadians(15));
-    public Pose lineUpToRam = new Pose(9.5, 20, Math.toRadians(90));
-    public Pose ram = new Pose(9.5, 12, Math.toRadians(90));
-
-    public Pose transitionScoreFromPickUpPreload = new Pose(50,20,Math.toRadians(100));
-
-    public Pose driveOutOfBox = new Pose(48,32 , Math.toRadians(180));
-
-    public Pose farScore = new Pose(58, 20, Math.toRadians(111));
     private int index = 0;
 
+    /* -------------------- Poses -------------------- */
 
+    public Pose startPose      = new Pose(56.000, 8.000, Math.toRadians(90));
+    public Pose scorePose      = new Pose(56.000, 10.000, Math.toRadians(115));
+
+    public Pose lineup1        = new Pose(40.126, 35.272, Math.toRadians(180));
+    public Pose intake1        = new Pose(18.712, 35.306, Math.toRadians(180));
+
+    public Pose lineup3        = new Pose(41.238, 60.391, Math.toRadians(180));
+    public Pose intake3        = new Pose(21.906, 60.040, Math.toRadians(180));
+
+    public Pose observation    = new Pose(11.452, 8.283, Math.toRadians(180));
+    public Pose exit           = new Pose(56.321, 23.470, Math.toRadians(180));
+
+    /* -------------------- Constructor -------------------- */
+
+    public Pose startPose(){
+        return startPose;
+    }
     public AutoFarPath(Follower follower, Alliance alliance) {
         this.follower = follower;
 
         if (alliance == Alliance.RED) {
-            start = start.mirror();
-            farScore = farScore.mirror();
-            driveOutOfBox = driveOutOfBox.mirror();
-
-            lineUpPickUpPreload = lineUpPickUpPreload.mirror();
-            pickUpPreloadAngled = pickUpPreloadAngled.mirror();
-            lineUpToRam = lineUpToRam.mirror();
-            ram = ram.mirror();
-            transitionScoreFromPickUpPreload = transitionScoreFromPickUpPreload.mirror();
+            startPose   = startPose.mirror();
+            scorePose   = scorePose.mirror();
+            lineup1     = lineup1.mirror();
+            intake1     = intake1.mirror();
+            lineup3     = lineup3.mirror();
+            intake3     = intake3.mirror();
+            observation = observation.mirror();
+            exit        = exit.mirror();
         }
     }
 
-    public PathChain lineUpPickUpPreload() {
-        return follower.pathBuilder()
-                .addPath(new BezierLine(farScore, lineUpPickUpPreload))
-                .setLinearHeadingInterpolation(farScore.getHeading(), lineUpPickUpPreload.getHeading())
-                .build();
-    }
+    /* -------------------- PathChains -------------------- */
 
-    public PathChain pickUpPreload() {
+    public PathChain start() {
         return follower.pathBuilder()
-                .addPath(new BezierLine(lineUpPickUpPreload, pickUpPreloadAngled))
-                .setLinearHeadingInterpolation(lineUpPickUpPreload.getHeading(), pickUpPreloadAngled.getHeading())
-                .build();
-    }
-
-    public PathChain lineUpToRam() {
-        return follower.pathBuilder()
-                .addPath(new BezierLine(pickUpPreloadAngled, lineUpToRam))
-                .setLinearHeadingInterpolation(pickUpPreloadAngled.getHeading(), lineUpToRam.getHeading())
-                .build();
-    }
-
-    public PathChain ram() {
-        return follower.pathBuilder()
-                .addPath(new BezierLine(lineUpToRam, ram))
-                .setLinearHeadingInterpolation(lineUpToRam.getHeading(), ram.getHeading())
-                .build();
-    }
-
-    public PathChain goToTransPoses() {
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ram, transitionScoreFromPickUpPreload))
-                .setLinearHeadingInterpolation(ram.getHeading(), transitionScoreFromPickUpPreload.getHeading())
-                .build();
-    }
-
-    public PathChain scorePickedUpPreload() {
-        return follower.pathBuilder()
-                .addPath(new BezierLine(transitionScoreFromPickUpPreload, farScore))
-                .setLinearHeadingInterpolation(transitionScoreFromPickUpPreload.getHeading(), farScore.getHeading())
-                .build();
-    }
-
-    public PathChain shootPreload() {
-        return follower.pathBuilder()
-                .addPath(new BezierLine(start, farScore))
-                .setLinearHeadingInterpolation(start.getHeading(), farScore.getHeading())
-                .build();
-    }
-
-
-    public PathChain outOfBox() {
-        return follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                farScore,
-                                driveOutOfBox
-                        )
+                .addPath(new BezierLine(startPose, scorePose))
+                .setLinearHeadingInterpolation(
+                        startPose.getHeading(),
+                        scorePose.getHeading()
                 )
-                .setLinearHeadingInterpolation(farScore.getHeading(), driveOutOfBox.getHeading())
                 .build();
     }
 
-//    public PathChain next() {
-//        switch (index++) {
-//            case 0: return shootPreload();
-//            case 1: return pickUp1();
-//            case 2: return score1();
-//            case 3: return pickUp2();
-//            case 4: return score2();
-//            case 5: return pickUp3();
-//            case 6: return score3();
-//            case 7: return outOfBox();
-//            default: return null;
-//        }
-//    }
+    public PathChain lineup1() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, lineup1))
+                .setLinearHeadingInterpolation(
+                        scorePose.getHeading(),
+                        lineup1.getHeading()
+                )
+                .build();
+    }
+
+    public PathChain intake1() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(lineup1, intake1))
+                .setTangentHeadingInterpolation()
+                .build();
+    }
+
+    public PathChain returnFromIntake1() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(intake1, scorePose))
+                .setLinearHeadingInterpolation(
+                        intake1.getHeading(),
+                        scorePose.getHeading()
+                )
+                .build();
+    }
+
+    public PathChain lineup3() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, lineup3))
+                .setLinearHeadingInterpolation(
+                        scorePose.getHeading(),
+                        lineup3.getHeading()
+                )
+                .build();
+    }
+
+    public PathChain intake3() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(lineup3, intake3))
+                .setTangentHeadingInterpolation()
+                .build();
+    }
+
+    public PathChain observation() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, observation))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+    }
+
+    public PathChain exit() {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, exit))
+                .setTangentHeadingInterpolation()
+                .build();
+    }
+
+    /* -------------------- Sequencer -------------------- */
 
     public PathChain next() {
         switch (index++) {
-            case 0: return shootPreload();
-            case 1: return lineUpPickUpPreload();
-            case 2: return pickUpPreload();
-            case 3: return lineUpToRam();
-            case 4: return ram();
-            case 5: return goToTransPoses();
-            case 6: return scorePickedUpPreload();
-            case 7: return outOfBox();
+            case 0: return start();
+            case 1: return lineup1();
+            case 2: return intake1();
+            case 3: return returnFromIntake1();
+            case 4: return lineup3();
+            case 5: return intake3();
+            case 6: return observation();
+            case 7: return exit();
             default: return null;
         }
     }

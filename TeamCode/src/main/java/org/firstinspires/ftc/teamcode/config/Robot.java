@@ -35,7 +35,7 @@ public class Robot {
     private final Timer loop = new Timer();
     public Alliance alliance;
     public CommandScheduler cs = CommandScheduler.getInstance();
-
+    public ElapsedTime loopTimer;
     protected GamepadEx driver;
     protected GamepadEx oper;
 
@@ -86,6 +86,7 @@ public class Robot {
         this.driver = new GamepadEx(driver);
         this.oper = new GamepadEx(oper);
         this.telemetry = telemetry;
+        loopTimer = new ElapsedTime();
 
         allHubs = h.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -112,6 +113,7 @@ public class Robot {
         intakeSubsystem = new IntakeSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h, alliance);
         indexerSubsystem = new IndexerSubsystem(h, telemetry);
+        loopTimer = new ElapsedTime();
 
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
@@ -280,7 +282,9 @@ public class Robot {
      * Telemetry data for teleOp
      */
     public void teleTelemetry() {
+        double loopTime = loopTimer.milliseconds();
         // telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
+        telemetry.addLine("--------------------------SubSystem------------------------");
         telemetry.addData("horizontal",limeLightSubsystem.getHorizontalError());
         telemetry.addData("dist",limeLightSubsystem.getDist());
         //telemetry.addData("input", shooterSubsystem.shooter1.getPower());
@@ -289,13 +293,22 @@ public class Robot {
         telemetry.addData("shooter 1 vel with ticks", shooterSubsystem.shooter1.getVelocity());
         telemetry.addData("shooter 2 vel", shooterSubsystem.shooter2.getVelocity());
         telemetry.addData("shooter RPM", shooterSubsystem.getRPM());
+        telemetry.addLine("--------------------------LOOP TIMINGS------------------------");
+        loopTimer.reset();
+        telemetry.addData("Loop Time (ms)", loopTime);
+        telemetry.addData("Loop Rate (Hz)", 1000 / loopTime); // Approximate
+
     } //end of teleTelemetry
 
     /**
      * Telemetry data for autoOp
      */
     public void autoTelemetry() {
-        //telemetry.addData("loopcycle",);
+        double loopTime = loopTimer.milliseconds();
+        loopTimer.reset();
+        telemetry.addData("Loop Time (ms)", loopTime);
+        telemetry.addData("Loop Rate (Hz)", 1000 / loopTime); // Approximate
+        telemetry.update();
     } //end of autoTelemetry
 
     /**
