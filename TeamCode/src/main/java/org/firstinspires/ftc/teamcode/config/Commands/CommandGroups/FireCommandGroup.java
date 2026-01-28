@@ -15,10 +15,7 @@ import org.firstinspires.ftc.teamcode.config.Subsystem.ShooterSubsystem;
 public class FireCommandGroup extends SequentialCommandGroup {
     public FireCommandGroup(ShooterSubsystem shoot, IndexerSubsystem index, IntakeSubsystem intake){
         addCommands(
-                new ParallelCommandGroup(
-                    new IndexCommand(index,-.4),
-                    new IntakeCommand(intake,-.4)
-                ),
+                new ReverseThroughPutCommand(index,intake),
                 new WaitCommand(1000),
                 new SetShooterVelocityCommand(shoot,5600),
                 new WaitCommand(2000),
