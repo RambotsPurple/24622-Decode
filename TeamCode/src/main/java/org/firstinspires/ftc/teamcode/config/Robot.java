@@ -54,7 +54,8 @@ public class Robot {
     private final Telemetry telemetry;
     public state state;
 
-    public double lastTime = 0;
+    public ElapsedTime lastTime   = new ElapsedTime();
+
 
     //for pd control for auto alignment
     public double error = 0 ;
@@ -123,7 +124,7 @@ public class Robot {
         // instaniate the lynx mod
         allHubs = h.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }//end of for
 
         cs.registerSubsystem(
@@ -169,6 +170,11 @@ public class Robot {
         cs.run();
     } //end of periodic
     public void aPeriodic(){
+        if (loop.getElapsedTime() % 5 == 0) {
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            } // end of for
+        } // end of if
         autoTelemetry();
         //follower.update();
         //
@@ -194,20 +200,18 @@ public class Robot {
      * @return pow
      */
     double kp = 0.1;
-    double kd = 0.01;
+    double kd = 0.002;
 
     public double trackTo(double error) {
-        double now = System.nanoTime() / 1e9;
-        double dt = now - lastTime;
-        if (dt <= 0) return 0;
 
-        double derivative = (error - lastError) / dt;
+
+        double derivative = (error - lastError) / lastTime.seconds();
         double output = kp * error + kd * derivative;
 
         lastError = error;
-        lastTime = now;
+        lastTime.reset();
 
-        return Math.signum(output);
+        return output;
     }
 
 
