@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.config.Commands.CommandGroups.FireCommandGroup;
 import org.firstinspires.ftc.teamcode.config.Commands.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IndexCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
@@ -37,22 +38,35 @@ public class CloseBlue extends OpModeCommand {
                 }),
 
                 new SequentialCommandGroup(
-                        // First path + shooter setup
-                        //new FollowPathCommand(robot.getFollower(), path.next()),
-                        new ShooterVelocityByDistanceCommand(robot.shooterSubsystem, robot.limeLightSubsystem),
-                        new IndexCommand(robot.indexerSubsystem, 1),
-                        new WaitCommand(1000),
+                        //move from start to shoot1
+                    new FollowPathCommand(robot.getFollower(),path.next()),
+                    new FireCommandGroup(robot.shooterSubsystem,robot.indexerSubsystem,robot.intakeSubsystem),
+                    //shoot1 to intake1
+                        new IntakeCommand(robot.intakeSubsystem,1),
+                    new FollowPathCommand(robot.getFollower(),path.next()),
+                    new IntakeCommand(robot.intakeSubsystem,0),
+                    //dirve back shoot postion
+                    new FollowPathCommand(robot.getFollower(),path.next()),
+                    new FireCommandGroup(robot.shooterSubsystem,robot.indexerSubsystem,robot.intakeSubsystem),
 
-                        // Move to next point and index
-                        new FollowPathCommand(robot.getFollower(), path.next()),
-                        new IndexCommand(robot.indexerSubsystem, 0),
-                        new WaitCommand(500),
+                        //lineup2
+                    new FollowPathCommand(robot.getFollower(),path.next()),
 
-                        // Intake + path split into sequential to reduce current spikes
-                        new FollowPathCommand(robot.getFollower(), path.next()),
-                        new WaitCommand(100), // small delay before intake
-                        new IntakeCommand(robot.intakeSubsystem, 0.7), // reduced power to prevent overload
-                        new WaitCommand(500) // give some time to intake
+                    //intake2
+                    new IntakeCommand(robot.intakeSubsystem,1),
+                    new FollowPathCommand(robot.getFollower(),path.next()),
+                    new IntakeCommand(robot.intakeSubsystem,0),
+
+                        //drive back to shooting postion
+
+                    new FollowPathCommand(robot.getFollower(),path.next()),
+                    new FireCommandGroup(robot.shooterSubsystem,robot.indexerSubsystem,robot.intakeSubsystem),
+
+                        //move to exit
+                    new FollowPathCommand(robot.getFollower(),path.next())
+
+
+
                 )
         );
     }
