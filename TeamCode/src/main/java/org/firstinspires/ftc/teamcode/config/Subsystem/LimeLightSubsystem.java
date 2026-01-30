@@ -12,10 +12,12 @@ import java.util.List;
 
 public class LimeLightSubsystem extends SubsystemBase {
     private final Limelight3A limelight;
+    private int alliance;
     public  LimeLightSubsystem(HardwareMap hw, Alliance alliance) {
         limelight = hw.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
-        limelight.pipelineSwitch(alliance == Alliance.BLUE?0:1);
+        this.alliance = alliance == Alliance.BLUE?0:1;
+        limelight.pipelineSwitch(this.alliance);
     } //end of constructor
 
     public void lStart(){

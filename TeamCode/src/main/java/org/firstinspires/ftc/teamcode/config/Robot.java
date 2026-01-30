@@ -288,6 +288,7 @@ public class Robot {
     public void teleTelemetry() {
         double loopTime = loopTimer.milliseconds();
         // telemetry.addData("ticks", shooterSubsystem.getCurrentPosition());
+        telemetry.addData("alliance",alliance);
         telemetry.addLine("--------------------------SubSystem------------------------");
         telemetry.addData("horizontal",limeLightSubsystem.getHorizontalError());
         telemetry.addData("dist",limeLightSubsystem.getDist());
