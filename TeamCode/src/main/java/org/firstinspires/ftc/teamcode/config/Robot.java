@@ -131,7 +131,7 @@ public class Robot {
                 shooterSubsystem, intakeSubsystem,limeLightSubsystem, indexerSubsystem
         ); // end of cs
 
-    }//end of teleop constructor
+    }//end of auto constructor
 
     /**
      * loops periodically during teleOp
@@ -203,15 +203,16 @@ public class Robot {
     double kd = 0.002;
 
     public double trackTo(double error) {
+        double dt =  lastTime.seconds();
+        if (dt < 0.001) return  0;
 
-
-        double derivative = (error - lastError) / lastTime.seconds();
+        double derivative = (error - lastError) / dt;
         double output = kp * error + kd * derivative;
 
         lastError = error;
         lastTime.reset();
 
-        return output;
+        return -1*output;
     }
 
 
@@ -263,7 +264,11 @@ public class Robot {
 
 
         driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenActive(
-               new InstantCommand(()-> setState(state.Locked)),
+                new ParallelCommandGroup(
+                        new InstantCommand(()-> setState(state.Locked)),
+                        new InstantCommand(()-> lastTime.reset()),
+                        new InstantCommand(()-> lastError = limeLightSubsystem.getHorizontalError())
+                ),
                 new InstantCommand(()-> setState(state.Manual))
         );
 

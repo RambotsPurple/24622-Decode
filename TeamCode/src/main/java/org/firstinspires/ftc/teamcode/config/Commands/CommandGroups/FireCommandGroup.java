@@ -15,12 +15,21 @@ import org.firstinspires.ftc.teamcode.config.Subsystem.ShooterSubsystem;
 public class FireCommandGroup extends SequentialCommandGroup {
     public FireCommandGroup(ShooterSubsystem shoot, IndexerSubsystem index, IntakeSubsystem intake){
         addCommands(
+                //reverse the index and intake so we don't prematurly shoot bolls
                 new ReverseThroughPutCommand(index,intake),
-                new WaitCommand(1000),
-                new SetShooterVelocityCommand(shoot,5600),
-                new WaitCommand(2000),
-                new ReverseThroughPutCommand(index,intake),
-                new WaitCommand(2000),
+                new WaitCommand(300),
+                //turn off all motors and start the flywheel
+                new ParallelCommandGroup(
+                        new ZeroThroughPutCommandGroup(intake,index),
+                        new SetShooterVelocityCommand(shoot,5600)
+
+                ),
+                //wait while we rev
+                new WaitCommand(2300),
+                //push all the balls
+                new ThroughPutCommandGroup(intake,index),
+                new WaitCommand(1500),
+                //power off everything to save power
                 new ZeroOutCommandGroup(index,shoot,intake)
 
         );
